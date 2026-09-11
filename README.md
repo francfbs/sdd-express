@@ -54,9 +54,10 @@ hooks.
                                     criterion, each with a way to verify it.
                           │         The panel reviews the plan too.
                           ▼
-/sdd:build             building     One task at a time. Implement, run the checks,
-                    (repeat)        QA reviews the diff, ledger gets updated.
-                          │         Scope changes go through the spec, not around it.
+/sdd:build             building     One task at a time: implement, run the checks,
+                                    QA reviews the diff, ledger gets updated.
+                          │         `/sdd:build all` runs straight through and stops
+                          │         when something actually needs you.
                           ▼
 /sdd:qa               validation    Every acceptance criterion checked against real
                                     code. Failures become new tasks and it loops back.
@@ -140,6 +141,40 @@ You can always override a gate. Claude will say what the risk is, do what you
 asked, and write the override into the decision log.
 
 ---
+
+## Running the build
+
+```bash
+/sdd:build              # the next ready task, then stop
+/sdd:build T7           # that specific task
+/sdd:build all          # straight through, stopping when something needs you
+/sdd:build through T5   # up to T5, then stop
+```
+
+Tasks always run **one at a time**, in dependency order, even in continuous
+mode. Each is implemented, checked against the project's own test and lint
+commands, reviewed by QA on its diff, and written into the ledger before the
+next begins. Continuous mode asks once whether to commit per task, then honours
+that for the whole run.
+
+Continuous mode is not "run unattended until it breaks". It stops the moment it
+reaches something a person should see:
+
+- the task turned out to contradict the spec — that becomes an amendment you
+  approve, never a silent change of plan
+- QA or the security reviewer found something it cannot confidently fix
+- a task is blocked, or everything remaining depends on one that is
+- the project's checks fail for a reason that is not this task
+- a real decision appeared — a trade-off, an ambiguity, two defensible designs
+- two tasks ended unverified rather than done, so uncertainty is compounding
+
+It tells you which condition fired and what the single next action is. Stopping
+is the feature working, not failing.
+
+**Implementation is deliberately not parallelised.** Parallel implementers
+collide on the same files, arrive without the context this session has built up,
+and produce a combined diff nobody can review. The parallelism goes where
+isolation helps instead: the review panel.
 
 ---
 

@@ -233,8 +233,10 @@ finding holes.
 
 1. **Read `progress.md` before doing anything.** Every command starts there.
 2. **Write `progress.md` before the turn ends.** Every command ends there.
-3. **One task at a time in `building`.** Mark it `in-progress` before you start,
-   `done` only after its acceptance criterion actually passes.
+3. **One task at a time in `building`** — including during a continuous run.
+   Mark it `in-progress` before you start, `done` only after its acceptance
+   criterion actually passes. Never implement two tasks in parallel: they
+   conflict on files and produce a diff nobody can review.
 4. **Never mark a task done on the strength of code you wrote but did not run.**
    If you could not verify it, say so and leave it `in-progress`.
 5. **A gate is not a formality.** If the user asks to skip one, say what the

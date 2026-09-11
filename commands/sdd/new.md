@@ -70,7 +70,64 @@ under Resolved, with the reasoning. Anything still unknown goes under Open,
 marked `blocking` or `non-blocking`. If the session dies mid-interview, the
 file is what survives.
 
-## 4. Close discovery
+**Notice durable domain knowledge as it goes past.** Some answers are about
+this feature; others are facts about the business that will still be true in
+five features' time — a rule about who may do what, a word the business uses
+precisely, a regulation, a workflow practitioners actually follow. Mark those
+mentally as you hear them. Step 4 turns them into the project's domain expert.
+
+If an answer is one short follow-up away from being a durable domain fact, ask
+the follow-up. It is the cheapest knowledge you will ever capture.
+
+## 4. Distil the domain expert
+
+The panel's `sdd-domain-expert` ships generic, and generic domain findings are
+worthless. You have just spent an interview learning this business — turn that
+into the project's own expert. Project agents outrank plugin agents, so the file
+takes effect on its own with nothing to register.
+
+Read `.claude/agents/sdd-domain-expert.md`.
+
+**If it does not exist**, write it now, from what you learned in the interview
+plus what you read in the codebase. Read the plugin's generic
+`sdd-domain-expert` first and carry its review format across unchanged — you are
+specialising the knowledge, not redesigning the output. Keep
+`name: sdd-domain-expert` exactly; that name is what gives it precedence.
+
+Replace the generic opening with a specific role that has standing — "a clinic
+operations manager with twelve years running front-desk scheduling", not "a
+domain expert" — and add the sections that carry the knowledge:
+
+- **What you know that the spec's author may not** — the non-obvious rules,
+  stated as facts concrete enough to test a spec against. This section is the
+  entire value of the file.
+- **The vocabulary** — each term, what it means here, and the wrong word people
+  reach for instead.
+- **Where this domain goes wrong** — the frequent real-world failures and their
+  consequences, not error messages.
+- **Regulatory and professional constraints** — what applies and where. Flag
+  what you are unsure of rather than asserting it.
+
+Rewrite the closing worthless-versus-real contrast with an example from *this*
+domain. It calibrates the agent more than any instruction.
+
+**If it already exists**, enrich it instead. Read it, then add only what this
+interview taught that is not already there, and correct anything it got wrong.
+Note the additions in one line each. Do not rewrite what is working — this file
+is meant to accumulate across features, and its value comes from that accretion.
+
+**Then show the user** the "What you know" and vocabulary sections — those are
+the parts they can judge — and ask what is wrong or missing. A distilled expert
+always gets one thing subtly wrong on the first pass, and it is always here.
+
+If the interview did not yield enough durable domain knowledge to be worth a
+file — a small internal tool, a purely technical change — say so and skip this
+step rather than writing a padded persona. An expert full of filler is worse
+than the generic one, because nobody re-reads it.
+
+Log what you did in the decision log, one line.
+
+## 5. Close discovery
 
 When only non-blocking questions remain:
 

@@ -171,6 +171,34 @@ the feature actually touches:
 
 State which members you convened and why, in one line, before dispatching.
 
+### The domain expert is per-project, and it accumulates
+
+The plugin's `sdd-domain-expert` is generic on purpose — a plugin cannot know
+whether this project is a clinic scheduler or a freight exchange. Generic domain
+findings are worthless, so the real expert is a **project-level** file at
+`.claude/agents/sdd-domain-expert.md`.
+
+Project agents outrank plugin agents, so that file wins by existing. Nothing
+registers it and nothing needs configuring.
+
+Before convening the domain expert, check whether that file exists.
+
+- **It exists** — convene it as normal. It is the specialised one.
+- **It does not exist** — convene the generic one, but say in one line that the
+  panel is running without a project domain expert and that `/sdd:new` will
+  distil one, or `/sdd:expert` will build one now. A user who does not know the
+  expert is generic will over-trust its findings.
+
+`/sdd:new` step 4 writes this file from the discovery interview the first time,
+and **enriches it on every later feature**. That accretion is the design: after
+four or five features the expert holds the business rules, the vocabulary and
+the failure modes that were learned one interview at a time, and it reviews far
+better than anything written up front in one sitting.
+
+So when a panel review surfaces a durable domain fact — a rule, a term, a
+constraint that will still be true in five features' time — it belongs in that
+file, not only in this feature's decision log. Add it, in one line.
+
 ### How to run a round
 
 Dispatch every chosen member **in one message, in parallel** — a round costs the

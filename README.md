@@ -42,7 +42,8 @@ hooks.
 ```
 /sdd:new <feature>     discovery    Claude reads your codebase, then interviews you
                                     in short rounds of multiple-choice questions.
-                          │         Answers and rejected options land in questions.md.
+                          │         Answers and rejected options land in questions.md,
+                          │         and the domain expert is distilled from what you said.
                           ▼
 /sdd:spec                 spec      Draft → the panel critiques it in parallel →
                                     gaps come back to you as concrete questions →
@@ -78,7 +79,7 @@ costs the wall-clock time of its slowest member rather than the sum.
 
 | Agent | Finds |
 |---|---|
-| `sdd-domain-expert` | Rules that do not match the real world; the vocabulary the domain actually uses; the unhappy paths practitioners hit daily |
+| `sdd-domain-expert` | Rules that do not match the real world; the vocabulary the domain actually uses; the unhappy paths practitioners hit daily. **Rewrites itself per project** — see below |
 | `sdd-ux-designer` | The states nobody specced — empty, loading, stale, error, offline; the cost of each interaction; error text; accessibility |
 | `sdd-systems-architect` | Boundaries, failure modes, consistency, migration and rollback, operability — and over-engineering, which it is told to call out |
 | `sdd-code-designer` | Abstractions that should not exist; what already exists to reuse; where behaviour belongs; names that will outlive everyone |
@@ -140,27 +141,45 @@ asked, and write the override into the decision log.
 
 ---
 
-## Customising it
-
-**Bring your own domain expert.** `sdd-domain-expert` is deliberately generic,
-and it is the one agent you should replace. Drop a `.claude/agents/` file in
-your project with the same name and it wins over the plugin's — now the panel
-has someone who knows obstetrics, or fixed income, or freight logistics:
-
-```markdown
----
-name: sdd-domain-expert
-description: Domain critic for <your domain>.
-tools: Read, Grep, Glob, Write, WebSearch
-model: inherit
 ---
 
-You are a <specific role> with N years in <domain>. You know that <the
-non-obvious rules>, that practitioners actually <the real workflow>, and that
-<the regulation> applies to <this data>.
+## The domain expert builds itself
 
-[...keep the review format from the plugin's version...]
+A generic domain expert produces generic findings, which are worthless. So the
+one on the panel is not the generic one for long.
+
+At the end of the discovery interview, `/sdd:new` **distils a domain expert from
+what you just said** and writes it to `.claude/agents/sdd-domain-expert.md`.
+Project agents outrank plugin agents, so it takes over from the generic one by
+existing — nothing to register, nothing to configure, no second interview.
+
+It captures the things that are true about your business rather than about this
+feature: the rules a newcomer gets wrong, the vocabulary the business uses
+precisely, what practitioners actually do that the happy path ignores, the
+regulation that applies.
+
+**And it accumulates.** Every later `/sdd:new` enriches the same file with
+whatever that interview taught, without rewriting what already works. After four
+or five features it holds the domain knowledge of five interviews — which
+reviews considerably better than anything you would write up front in one
+sitting, because nobody knows all of it up front.
+
 ```
+/sdd:new patient-timeline    → writes the expert: booking rules, no-show handling
+/sdd:new bulk-export         → adds: LGPD retention, who may export identified data
+/sdd:new shift-handover      → adds: who is accountable when cover staff act
+```
+
+You are shown the knowledge sections each time and asked what is wrong — a
+distilled expert always gets one thing subtly wrong, and it is always there.
+
+`/sdd:expert` is the manual door onto the same file: inspect what it knows,
+correct it, build one up front, or add a second expert for a distinct domain
+(`sdd-domain-expert-billing` alongside `sdd-domain-expert-clinical`).
+
+---
+
+## Customising it
 
 **Tune the models.** Agents default to `inherit` for the expensive judgement
 calls (domain, architecture, security) and `sonnet` for the rest. Change the

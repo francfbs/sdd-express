@@ -17,20 +17,45 @@ spec before you build it.**
 
 ## Install
 
-```bash
-claude
-> /plugin marketplace add francfbs/sdd-express
-> /plugin install sddx@sdd-express
-```
-
-Or point it at a local clone:
+From your shell, not inside Claude Code:
 
 ```bash
-git clone https://github.com/francfbs/sdd-express.git
-claude
-> /plugin marketplace add ./sdd-express
-> /plugin install sddx@sdd-express
+claude plugin marketplace add francfbs/sdd-express
+claude plugin install sddx@sdd-express
 ```
+
+Then, in a Claude Code session that is already open:
+
+```
+/reload-plugins
+```
+
+`claude plugin install` runs outside the session, so the plugin loads on your
+next launch or when you reload. Confirm with `/plugin list` — you should see
+`sddx`, and `/sddx:new` in the command autocomplete.
+
+It installs to **user scope** by default, which means every project. Use
+`--scope project` to install it for everyone who clones one repository (this
+writes `.claude/settings.json` there, which you then commit), or `--scope local`
+for just yourself in just that repository.
+
+<details>
+<summary>Installing from the <code>/plugin</code> panel instead</summary>
+
+`/plugin install sddx@sdd-express` inside a session does **not** install on its
+own — it opens the plugin's detail view, and the install only happens once you
+pick an installation scope there and confirm. Leaving that panel early looks
+like the command worked when nothing was written. The full path is:
+
+1. `/plugin` → **Discover** tab
+2. Select `sddx`, press **Enter**
+3. Choose a scope — **User**, **Project**, or **Local**
+4. Confirm
+5. **Esc** to close the panel; the reload runs for you
+
+The shell commands above avoid the interactive step entirely, which is why they
+are the recommended path.
+</details>
 
 Nothing else to configure. The plugin brings its own commands, agents, skill and
 hooks.

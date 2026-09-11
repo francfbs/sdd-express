@@ -1,6 +1,6 @@
 {
   "name": "sddx",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Spec-driven feature development for Claude Code: an interview that produces a real spec, a panel of expert critics that finds its holes, tasks with verifiable acceptance criteria, and a ledger on disk that survives compaction.",
   "author": {
     "name": "Francisco B Santos",

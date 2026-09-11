@@ -20,7 +20,7 @@ this happens in — a receptionist with a patient waiting, a nurse mid-shift.}}
 ## Acceptance criteria
 
 Numbered, independently verifiable, written as outcomes. This is what
-`/sdd:qa` checks the code against. If nobody can test it, it is not a criterion.
+`/sddx:qa` checks the code against. If nobody can test it, it is not a criterion.
 
 - **AC-1** — {{observable outcome}}
 - **AC-2** — {{observable outcome}}

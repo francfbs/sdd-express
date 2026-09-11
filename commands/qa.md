@@ -34,12 +34,12 @@ unimplemented, because no task felt like it owned them.
 
 Dispatch **in parallel, in one message**:
 
-- `sdd-qa-engineer` — the whole diff against the whole spec, tests run
+- `sddx:sdd-qa-engineer` — the whole diff against the whole spec, tests run
 - `sdd-domain-expert` — does the built behaviour match how the domain really
   works, now that it is real rather than described
-- `sdd-security-reviewer` — if the feature touches auth, permissions, personal
+- `sddx:sdd-security-reviewer` — if the feature touches auth, permissions, personal
   or regulated data, payments, upload, or untrusted input
-- `sdd-ux-designer` — if there is a user-facing surface; ask specifically about
+- `sddx:sdd-ux-designer` — if there is a user-facing surface; ask specifically about
   the states that only became visible once it was built
 
 Give each the spec, the full feature diff, the decision log and a review file
@@ -57,8 +57,8 @@ Then the panel's findings, consolidated — never raw.
 
 **If anything fails or is unverified**, turn each into a new task in `tasks.md`
 with its own acceptance criterion, set phase back to `building`, log why, and
-tell the user to run `/sdd:build`. This is a normal outcome, not a failure of
+tell the user to run `/sddx:build`. This is a normal outcome, not a failure of
 the process — it is the process working.
 
 **If everything passes**, tick the `validation` gate, set phase to `done`,
-update `updated:`, and log it. Tell the user to run `/sdd:archive`.
+update `updated:`, and log it. Tell the user to run `/sddx:archive`.

@@ -24,7 +24,7 @@ and the spec, questions and tasks sit beside it in \`.sdd/features/${slug}/\`.
 
 Before doing any work on this feature, read that ledger and the \`sdd-protocol\`
 skill. Do not advance a phase on your own initiative — the user runs the
-\`/sdd:\` command that does it. \`/sdd:status\` gives the full briefing.
+\`/sddx:\` command that does it. \`/sddx:status\` gives the full briefing.
 
 Ledger header:
 EOF

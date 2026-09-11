@@ -8,7 +8,7 @@ Read the `sdd-protocol` skill first. Follow it exactly.
 
 Read `.sdd/ACTIVE`, then `.sdd/features/<slug>/progress.md`.
 
-- No active feature → tell the user to run `/sdd:new`. Stop.
+- No active feature → tell the user to run `/sddx:new`. Stop.
 - Phase is not `discovery` or `spec` → say what phase it is in and which command
   applies. Stop.
 - Blocking questions still open in `questions.md` → list them and ask them now,
@@ -20,7 +20,7 @@ Read `questions.md`, the decision log, `CLAUDE.md`, and the parts of the
 codebase this will touch. Write `spec.md` from the protocol template.
 
 Write it as a contract, not a design document. No implementation, no file
-names, no library choices — those belong to `/sdd:plan`. The acceptance
+names, no library choices — those belong to `/sddx:plan`. The acceptance
 criteria are the load-bearing part: numbered, observable, each one something a
 person could check. If you cannot say how a criterion would be checked, it is
 not ready to be one.
@@ -64,7 +64,7 @@ Same members, revised spec, review files `-r2`. Consolidate the same way.
 Stop after round 2 unless the user asks for more. A third round sharpens prose;
 it does not find holes.
 
-If the spec got long or vague, run `sdd-tech-writer` over it now — but treat
+If the spec got long or vague, run `sddx:sdd-tech-writer` over it now — but treat
 every ambiguity it flags as a question for the user, not something to resolve
 yourself.
 
@@ -82,6 +82,6 @@ real answer, not inferred from silence or from "ok".**
 
 On approval: set `status: approved` and the date in `spec.md`, tick the `spec`
 gate in `progress.md`, log the approval, update `updated:`. Tell them to run
-`/sdd:plan`.
+`/sddx:plan`.
 
 If they want changes: apply them, log them, and ask again.

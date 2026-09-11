@@ -16,7 +16,7 @@ Read `.sdd/ACTIVE` and `progress.md`.
 
 ## 2. Write the closing documents
 
-Dispatch `sdd-tech-writer` with `spec.md`, `progress.md`, `tasks.md`, the
+Dispatch `sddx:sdd-tech-writer` with `spec.md`, `progress.md`, `tasks.md`, the
 feature's commits, and the paths to `README.md` / `CLAUDE.md` / any docs
 directory. Ask it for:
 

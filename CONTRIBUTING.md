@@ -51,7 +51,7 @@ protocol is a bug in the command.
 There is no test suite; it is prompts. Before opening a PR:
 
 1. Install your branch locally: `/plugin marketplace add ./sdd-express`
-2. Run a real feature end to end — `/sdd:new` through `/sdd:archive` — on a
+2. Run a real feature end to end — `/sddx:new` through `/sddx:archive` — on a
    throwaway project. Small is fine; it needs to be real, not hypothetical.
 3. If you touched a hook, run `bash hooks/<script>.sh` directly against a
    synthetic `.sdd/` directory and check both the firing and the silent paths.

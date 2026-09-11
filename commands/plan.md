@@ -8,10 +8,10 @@ Read the `sdd-protocol` skill first. Follow it exactly.
 
 Read `.sdd/ACTIVE` and `progress.md`.
 
-- No active feature → `/sdd:new`. Stop.
-- `spec.md` is not `approved` → say so, tell them to run `/sdd:spec`. Stop.
+- No active feature → `/sddx:new`. Stop.
+- `spec.md` is not `approved` → say so, tell them to run `/sddx:spec`. Stop.
   Do not plan against a draft spec; that is how the plan and the contract drift.
-- Already in `building` → say so and point at `/sdd:build` or `/sdd:status`. Stop.
+- Already in `building` → say so and point at `/sddx:build` or `/sddx:status`. Stop.
 
 ## 2. Understand the ground before you plan
 
@@ -47,10 +47,10 @@ Write `tasks.md` from the protocol template.
 
 Dispatch **in parallel, in one message**:
 
-- `sdd-code-designer` — task boundaries, reuse, order, abstractions that should
+- `sddx:sdd-code-designer` — task boundaries, reuse, order, abstractions that should
   not exist
-- `sdd-qa-engineer` — criteria coverage, untestable tasks, missing edge cases
-- `sdd-systems-architect` — only if the feature touches infrastructure, data
+- `sddx:sdd-qa-engineer` — criteria coverage, untestable tasks, missing edge cases
+- `sddx:sdd-systems-architect` — only if the feature touches infrastructure, data
   migration, or a service boundary
 
 Give each the spec, the draft `tasks.md`, the decision log, and their review
@@ -68,4 +68,4 @@ Show the user the task list — ID, title, what it satisfies — plus the total
 count and which tasks are on the critical path. Ask if the order is right; they
 often know a sequencing constraint you cannot see.
 
-Then tell them to run `/sdd:build`.
+Then tell them to run `/sddx:build`.

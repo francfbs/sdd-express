@@ -5,7 +5,7 @@ argument-hint: "[what to add or correct, optional]"
 
 Work on this project's domain expert: **$ARGUMENTS**
 
-Normally you do not need this command. `/sdd:new` distils the domain expert from
+Normally you do not need this command. `/sddx:new` distils the domain expert from
 the discovery interview and enriches it on every later feature. Use this when
 you want to work on the expert directly:
 
@@ -14,8 +14,9 @@ you want to work on the expert directly:
 - **Build one up front**, before the first feature
 - **Add a second expert** for a distinct domain in the same system
 
-The file is `.claude/agents/sdd-domain-expert.md`. Project agents outrank plugin
-agents, so it takes effect on its own — nothing to register.
+The file is `.claude/agents/sdd-domain-expert.md`. A project agent is
+dispatchable under its bare name, and the protocol prefers it over the plugin's
+namespaced `sddx:sdd-domain-expert` whenever it exists — nothing to register.
 
 ## If no argument was given
 
@@ -27,7 +28,7 @@ against the specs in `.sdd/features/` and `.sdd/archive/`: domain facts that
 show up in those but not in the expert are exactly what is missing. Offer to add
 them.
 
-**If it does not exist:** say so, and offer the two paths. Running `/sdd:new`
+**If it does not exist:** say so, and offer the two paths. Running `/sddx:new`
 gets you one for free as a by-product of the next feature, which is the cheaper
 route. Building one now means an interview — worth it only if you are about to
 start several features at once.
@@ -56,7 +57,7 @@ multiple-choice questions, mining only for what is *not* in the code:
    the regulation and its jurisdiction, and what practitioners do that the happy
    path ignores: corrections after the fact, duplicates, covering a shift.
 
-Then write the file exactly as `/sdd:new` step 4 describes: the plugin's review
+Then write the file exactly as `/sddx:new` step 4 describes: the plugin's review
 format carried across unchanged, a specific role with standing, and the four
 knowledge sections — what you know that the author may not, the vocabulary,
 where this domain goes wrong, regulatory constraints. Close with a

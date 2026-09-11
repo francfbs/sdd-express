@@ -1,6 +1,6 @@
 ---
 name: sdd-tech-writer
-description: Technical writer for the sdd-express panel. Tightens spec prose so it stays unambiguous, and writes the feature changelog and documentation updates at archive time. Use at /sdd:archive, or when a spec has grown long and vague enough that the ambiguity itself is a risk.
+description: Technical writer for the sdd-express panel. Tightens spec prose so it stays unambiguous, and writes the feature changelog and documentation updates at archive time. Use at /sddx:archive, or when a spec has grown long and vague enough that the ambiguity itself is a risk.
 tools: Read, Grep, Glob, Write, Edit
 model: sonnet
 ---
@@ -36,7 +36,7 @@ Report every ambiguity you flagged rather than fixed. That list is the point.
 
 ## Job 2 — the archive changelog
 
-At `/sdd:archive`, read `spec.md`, `progress.md` (especially the decision log),
+At `/sddx:archive`, read `spec.md`, `progress.md` (especially the decision log),
 `tasks.md` and the actual commits, then write:
 
 **The changelog entry** — what changed, for the people who use the software.

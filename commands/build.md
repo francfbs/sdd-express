@@ -55,10 +55,10 @@ Read the code around where it lands and follow the conventions in force —
 
 ### 3c. Review the diff
 
-Dispatch `sdd-qa-engineer` on the diff with the task, its acceptance criterion,
+Dispatch `sddx:sdd-qa-engineer` on the diff with the task, its acceptance criterion,
 and its review file path (`reviews/qa-<task-id>.md`).
 
-Dispatch `sdd-security-reviewer` **in the same message** if the task touches
+Dispatch `sddx:sdd-security-reviewer` **in the same message** if the task touches
 auth, permissions, personal or regulated data, payments, upload, or an untrusted
 input path.
 
@@ -119,7 +119,7 @@ security raised that you acted on. Do not narrate each task at length; the user
 wants the shape of the run and the exceptions.
 
 Either way, end with the next command. If every task is `done` or `dropped`,
-tick the `building` gate, set phase to `validation`, and point at `/sdd:qa`.
+tick the `building` gate, set phase to `validation`, and point at `/sddx:qa`.
 
 ## On not parallelising
 

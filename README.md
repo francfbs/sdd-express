@@ -20,7 +20,7 @@ spec before you build it.**
 ```bash
 claude
 > /plugin marketplace add francfbs/sdd-express
-> /plugin install sdd-express@sdd-express
+> /plugin install sddx@sdd-express
 ```
 
 Or point it at a local clone:
@@ -29,45 +29,64 @@ Or point it at a local clone:
 git clone https://github.com/francfbs/sdd-express.git
 claude
 > /plugin marketplace add ./sdd-express
-> /plugin install sdd-express@sdd-express
+> /plugin install sddx@sdd-express
 ```
 
 Nothing else to configure. The plugin brings its own commands, agents, skill and
 hooks.
+
+### What it writes where
+
+**Installing writes nothing to your project.** The plugin is cloned to
+`~/.claude/plugins/marketplaces/sdd-express/` and registered in your user
+settings. The one exception is installing at `project` scope, which records the
+plugin in `.claude/settings.json` so everyone who clones the repo gets it.
+
+**Using it creates two things in your project**, both meant to be committed:
+
+```
+.sdd/                                ← on /sddx:new — the ledger, spec, tasks, reviews
+.claude/agents/sdd-domain-expert.md  ← the domain expert distilled from your interview
+```
+
+The second one is worth knowing about: the plugin writes a subagent into your
+repo's own `.claude/agents/`. That is how this project gets a domain expert that
+knows your business instead of the plugin's generic one — and it is yours to
+edit or delete.
 
 ---
 
 ## The flow
 
 ```
-/sdd:new <feature>     discovery    Claude reads your codebase, then interviews you
+/sddx:new <feature>     discovery   Claude reads your codebase, then interviews you
                                     in short rounds of multiple-choice questions.
-                          │         Answers and rejected options land in questions.md,
-                          │         and the domain expert is distilled from what you said.
-                          ▼
-/sdd:spec                 spec      Draft → the panel critiques it in parallel →
+                         │          Answers and rejected options land in questions.md,
+                         │          and the domain expert is distilled from what you said.
+                         ▼
+/sddx:spec                   spec   Draft → the panel critiques it in parallel →
                                     gaps come back to you as concrete questions →
-                          │         spec.md, with numbered acceptance criteria.
-                          ▼         ⛔ gate: you must approve it explicitly.
+                         │          spec.md, with numbered acceptance criteria.
+                         ▼          ⛔ gate: you must approve it explicitly.
 
-/sdd:plan              planning     Spec becomes ordered tasks, each mapped to a
+/sddx:plan               planning   Spec becomes ordered tasks, each mapped to a
                                     criterion, each with a way to verify it.
-                          │         The panel reviews the plan too.
-                          ▼
-/sdd:build             building     One task at a time: implement, run the checks,
+                         │          The panel reviews the plan too.
+                         ▼
+/sddx:build              building   One task at a time: implement, run the checks,
                                     QA reviews the diff, ledger gets updated.
-                          │         `/sdd:build all` runs straight through and stops
-                          │         when something actually needs you.
-                          ▼
-/sdd:qa               validation    Every acceptance criterion checked against real
+                         │          `/sddx:build all` runs straight through and stops
+                         │          when something actually needs you.
+                         ▼
+/sddx:qa               validation   Every acceptance criterion checked against real
                                     code. Failures become new tasks and it loops back.
-                          │
-                          ▼
-/sdd:archive             done       Changelog, doc updates, and the whole paper trail
+                         │
+                         ▼
+/sddx:archive                done   Changelog, doc updates, and the whole paper trail
                                     moved to .sdd/archive/ for whoever comes next.
 ```
 
-`/sdd:status` works at any point and tells you exactly where you are and what to
+`/sddx:status` works at any point and tells you exactly where you are and what to
 run next — written for someone who has been away for two weeks.
 
 ---
@@ -81,12 +100,12 @@ costs the wall-clock time of its slowest member rather than the sum.
 | Agent | Finds |
 |---|---|
 | `sdd-domain-expert` | Rules that do not match the real world; the vocabulary the domain actually uses; the unhappy paths practitioners hit daily. **Rewrites itself per project** — see below |
-| `sdd-ux-designer` | The states nobody specced — empty, loading, stale, error, offline; the cost of each interaction; error text; accessibility |
-| `sdd-systems-architect` | Boundaries, failure modes, consistency, migration and rollback, operability — and over-engineering, which it is told to call out |
-| `sdd-code-designer` | Abstractions that should not exist; what already exists to reuse; where behaviour belongs; names that will outlive everyone |
-| `sdd-qa-engineer` | Criteria that cannot be verified; coverage holes; and at build time, the defect the author could not see |
-| `sdd-security-reviewer` | Authorization per operation, object-level access, tenant isolation, where sensitive data leaks into logs and errors |
-| `sdd-tech-writer` | Ambiguity that will become a bug; and at archive time, the changelog and doc deltas |
+| `sddx:sdd-ux-designer` | The states nobody specced — empty, loading, stale, error, offline; the cost of each interaction; error text; accessibility |
+| `sddx:sdd-systems-architect` | Boundaries, failure modes, consistency, migration and rollback, operability — and over-engineering, which it is told to call out |
+| `sddx:sdd-code-designer` | Abstractions that should not exist; what already exists to reuse; where behaviour belongs; names that will outlive everyone |
+| `sddx:sdd-qa-engineer` | Criteria that cannot be verified; coverage holes; and at build time, the defect the author could not see |
+| `sddx:sdd-security-reviewer` | Authorization per operation, object-level access, tenant isolation, where sensitive data leaks into logs and errors |
+| `sddx:sdd-tech-writer` | Ambiguity that will become a bug; and at archive time, the changelog and doc deltas |
 
 Only the relevant ones are convened. A pure-backend feature does not need the UX
 designer; a feature that touches no auth and no personal data does not need the
@@ -132,10 +151,10 @@ Two hooks keep it honest:
 
 Each phase has a gate, and they are not decorative:
 
-- `/sdd:spec` will not draft around an unanswered blocking question
-- `/sdd:plan` refuses to run against a spec you have not approved
-- `/sdd:build` will not mark a task done on code it did not verify
-- `/sdd:qa` reports **UNVERIFIED** rather than rounding up to pass
+- `/sddx:spec` will not draft around an unanswered blocking question
+- `/sddx:plan` refuses to run against a spec you have not approved
+- `/sddx:build` will not mark a task done on code it did not verify
+- `/sddx:qa` reports **UNVERIFIED** rather than rounding up to pass
 
 You can always override a gate. Claude will say what the risk is, do what you
 asked, and write the override into the decision log.
@@ -145,10 +164,10 @@ asked, and write the override into the decision log.
 ## Running the build
 
 ```bash
-/sdd:build              # the next ready task, then stop
-/sdd:build T7           # that specific task
-/sdd:build all          # straight through, stopping when something needs you
-/sdd:build through T5   # up to T5, then stop
+/sddx:build              # the next ready task, then stop
+/sddx:build T7           # that specific task
+/sddx:build all          # straight through, stopping when something needs you
+/sddx:build through T5   # up to T5, then stop
 ```
 
 Tasks always run **one at a time**, in dependency order, even in continuous
@@ -183,32 +202,33 @@ isolation helps instead: the review panel.
 A generic domain expert produces generic findings, which are worthless. So the
 one on the panel is not the generic one for long.
 
-At the end of the discovery interview, `/sdd:new` **distils a domain expert from
+At the end of the discovery interview, `/sddx:new` **distils a domain expert from
 what you just said** and writes it to `.claude/agents/sdd-domain-expert.md`.
-Project agents outrank plugin agents, so it takes over from the generic one by
-existing — nothing to register, nothing to configure, no second interview.
+From then on the panel convenes that one instead of the generic
+`sddx:sdd-domain-expert` — nothing to register, nothing to configure, no second
+interview.
 
 It captures the things that are true about your business rather than about this
 feature: the rules a newcomer gets wrong, the vocabulary the business uses
 precisely, what practitioners actually do that the happy path ignores, the
 regulation that applies.
 
-**And it accumulates.** Every later `/sdd:new` enriches the same file with
+**And it accumulates.** Every later `/sddx:new` enriches the same file with
 whatever that interview taught, without rewriting what already works. After four
 or five features it holds the domain knowledge of five interviews — which
 reviews considerably better than anything you would write up front in one
 sitting, because nobody knows all of it up front.
 
 ```
-/sdd:new patient-timeline    → writes the expert: booking rules, no-show handling
-/sdd:new bulk-export         → adds: LGPD retention, who may export identified data
-/sdd:new shift-handover      → adds: who is accountable when cover staff act
+/sddx:new patient-timeline    → writes the expert: booking rules, no-show handling
+/sddx:new bulk-export         → adds: LGPD retention, who may export identified data
+/sddx:new shift-handover      → adds: who is accountable when cover staff act
 ```
 
 You are shown the knowledge sections each time and asked what is wrong — a
 distilled expert always gets one thing subtly wrong, and it is always there.
 
-`/sdd:expert` is the manual door onto the same file: inspect what it knows,
+`/sddx:expert` is the manual door onto the same file: inspect what it knows,
 correct it, build one up front, or add a second expert for a distinct domain
 (`sdd-domain-expert-billing` alongside `sdd-domain-expert-clinical`).
 

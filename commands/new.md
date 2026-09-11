@@ -83,16 +83,17 @@ the follow-up. It is the cheapest knowledge you will ever capture.
 
 The panel's `sdd-domain-expert` ships generic, and generic domain findings are
 worthless. You have just spent an interview learning this business — turn that
-into the project's own expert. Project agents outrank plugin agents, so the file
-takes effect on its own with nothing to register.
+into the project's own expert. A project agent is dispatchable under its bare
+name, so the file takes effect with nothing to register.
 
 Read `.claude/agents/sdd-domain-expert.md`.
 
 **If it does not exist**, write it now, from what you learned in the interview
 plus what you read in the codebase. Read the plugin's generic
-`sdd-domain-expert` first and carry its review format across unchanged — you are
-specialising the knowledge, not redesigning the output. Keep
-`name: sdd-domain-expert` exactly; that name is what gives it precedence.
+`sddx:sdd-domain-expert` first and carry its review format across unchanged —
+you are specialising the knowledge, not redesigning the output. Keep
+`name: sdd-domain-expert` exactly: the protocol dispatches that bare name when
+this file exists, and falls back to the plugin's namespaced one when it does not.
 
 Replace the generic opening with a specific role that has standing — "a clinic
 operations manager with twelve years running front-desk scheduling", not "a
@@ -140,4 +141,4 @@ to five decisions that shape the feature, and anything still open. Ask them to
 correct it.
 
 Do not write `spec.md` and do not advance the phase. Tell them to run
-`/sdd:spec` when the recap looks right.
+`/sddx:spec` when the recap looks right.

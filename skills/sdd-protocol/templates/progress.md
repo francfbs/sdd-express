@@ -19,7 +19,7 @@ has never seen it understands the point in 20 seconds.}}
 
 ## Tasks
 
-_Populated by `/sdd:plan`._
+_Populated by `/sddx:plan`._
 
 | ID | Task | Status | Satisfies |
 |----|------|--------|-----------|

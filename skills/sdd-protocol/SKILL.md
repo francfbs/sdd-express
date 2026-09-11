@@ -1,6 +1,6 @@
 ---
 name: sdd-protocol
-description: The shared contract for the sdd-express spec-driven feature workflow — where feature state lives on disk, the phase gates that govern progress, the format of every artifact (spec, questions, tasks, progress), and how to convene the expert panel. Load this before running any /sdd: command, before writing or reading any file under .sdd/features/, and whenever you need to know what phase a feature is in or what is allowed to happen next.
+description: The shared contract for the sdd-express spec-driven feature workflow — where feature state lives on disk, the phase gates that govern progress, the format of every artifact (spec, questions, tasks, progress), and how to convene the expert panel. Load this before running any /sddx: command, before writing or reading any file under .sdd/features/, and whenever you need to know what phase a feature is in or what is allowed to happen next.
 ---
 
 # The sdd-express protocol
@@ -36,14 +36,14 @@ messages stay in English regardless. Never announce this rule — just follow it
       reviews/         one file per panel member, per round
         <persona>-r<n>.md
   archive/
-    <slug>/            completed features, moved here by /sdd:archive
+    <slug>/            completed features, moved here by /sddx:archive
 ```
 
 `<slug>` is kebab-case, derived from the feature name: `pix-payment`,
 `patient-timeline`, `bulk-export`.
 
 The **active feature** is whichever slug is named in `.sdd/ACTIVE`. That file
-holds one line: the slug. `/sdd:new` writes it, `/sdd:archive` clears it.
+holds one line: the slug. `/sddx:new` writes it, `/sddx:archive` clears it.
 If `.sdd/ACTIVE` is missing or empty, there is no active feature.
 
 ## The phases and their gates
@@ -54,16 +54,16 @@ command that advances it.
 
 | Phase | Command | Gate to leave it |
 |---|---|---|
-| `discovery` | `/sdd:new` | Every blocking question in `questions.md` is resolved |
-| `spec` | `/sdd:spec` | The user has explicitly approved `spec.md` |
-| `planning` | `/sdd:plan` | Every task has a verifiable acceptance criterion and a resolved dependency order |
-| `building` | `/sdd:build` | Every task is `done` or explicitly `dropped` |
-| `validation` | `/sdd:qa` | Every acceptance criterion in the spec is verified against real code |
+| `discovery` | `/sddx:new` | Every blocking question in `questions.md` is resolved |
+| `spec` | `/sddx:spec` | The user has explicitly approved `spec.md` |
+| `planning` | `/sddx:plan` | Every task has a verifiable acceptance criterion and a resolved dependency order |
+| `building` | `/sddx:build` | Every task is `done` or explicitly `dropped` |
+| `validation` | `/sddx:qa` | Every acceptance criterion in the spec is verified against real code |
 
 When a command is invoked for a phase the feature is not in, say so and stop.
 Do not "helpfully" run the earlier phase. Tell the user which command to run.
 
-The one exception: `/sdd:qa` may be run at any time after `planning` as a
+The one exception: `/sddx:qa` may be run at any time after `planning` as a
 mid-flight check. It reports; it does not advance the phase.
 
 ## Writing the artifacts
@@ -114,7 +114,7 @@ implementation plan. Required sections:
 - **Users and context** — who does this, when, under what pressure
 - **Behaviour** — what the system does, as observable statements
 - **Acceptance criteria** — numbered, each independently verifiable. This is the
-  part `/sdd:qa` checks against. A criterion nobody can test is not a criterion
+  part `/sddx:qa` checks against. A criterion nobody can test is not a criterion
 - **Non-functional requirements** — performance, security, accessibility, data
   retention, whatever actually applies. Omit the heading if nothing applies
 - **Out of scope** — the boundary. Be specific; this is what stops scope creep
@@ -162,34 +162,45 @@ the feature actually touches:
 | Convene | When the feature… |
 |---|---|
 | `sdd-domain-expert` | always — every feature has a business domain |
-| `sdd-ux-designer` | has any user-facing surface, including CLI output and error text |
-| `sdd-systems-architect` | crosses a process/service/network boundary, adds infrastructure, or changes how data is stored or deployed |
-| `sdd-code-designer` | introduces a new module, abstraction, or public API within the codebase |
-| `sdd-qa-engineer` | always — every feature needs to be verifiable |
-| `sdd-security-reviewer` | touches auth, permissions, personal or regulated data, payments, file upload, or anything reachable by an untrusted caller |
-| `sdd-tech-writer` | only at `/sdd:archive`, to write the changelog |
+| `sddx:sdd-ux-designer` | has any user-facing surface, including CLI output and error text |
+| `sddx:sdd-systems-architect` | crosses a process/service/network boundary, adds infrastructure, or changes how data is stored or deployed |
+| `sddx:sdd-code-designer` | introduces a new module, abstraction, or public API within the codebase |
+| `sddx:sdd-qa-engineer` | always — every feature needs to be verifiable |
+| `sddx:sdd-security-reviewer` | touches auth, permissions, personal or regulated data, payments, file upload, or anything reachable by an untrusted caller |
+| `sddx:sdd-tech-writer` | only at `/sddx:archive`, to write the changelog |
 
 State which members you convened and why, in one line, before dispatching.
 
 ### The domain expert is per-project, and it accumulates
 
-The plugin's `sdd-domain-expert` is generic on purpose — a plugin cannot know
-whether this project is a clinic scheduler or a freight exchange. Generic domain
+The plugin's domain expert is generic on purpose — a plugin cannot know whether
+this project is a clinic scheduler or a freight exchange. Generic domain
 findings are worthless, so the real expert is a **project-level** file at
 `.claude/agents/sdd-domain-expert.md`.
 
-Project agents outrank plugin agents, so that file wins by existing. Nothing
-registers it and nothing needs configuring.
+**The two do not override each other; they coexist under different names.**
+A plugin agent is namespaced, a project agent is not, so both are dispatchable
+and you must pick deliberately:
 
-Before convening the domain expert, check whether that file exists.
+| Agent name | Where it comes from |
+|---|---|
+| `sdd-domain-expert` | this project's `.claude/agents/` — the specialised one |
+| `sddx:sdd-domain-expert` | the plugin — generic, the fallback |
 
-- **It exists** — convene it as normal. It is the specialised one.
-- **It does not exist** — convene the generic one, but say in one line that the
-  panel is running without a project domain expert and that `/sdd:new` will
-  distil one, or `/sdd:expert` will build one now. A user who does not know the
-  expert is generic will over-trust its findings.
+So before convening the domain expert, check whether
+`.claude/agents/sdd-domain-expert.md` exists:
 
-`/sdd:new` step 4 writes this file from the discovery interview the first time,
+- **It exists** — dispatch `sdd-domain-expert`. Never dispatch the plugin's
+  generic one as well; you would get two reviews, one of them worthless.
+- **It does not exist** — dispatch `sddx:sdd-domain-expert`, and say in one line
+  that the panel is running without a project domain expert and that `/sddx:new`
+  will distil one, or `/sddx:expert` will build one now. A user who does not know
+  the expert is generic will over-trust its findings.
+
+The same rule applies to any additional domain expert
+(`sdd-domain-expert-billing` and so on): unnamespaced means project-level.
+
+`/sddx:new` step 4 writes this file from the discovery interview the first time,
 and **enriches it on every later feature**. That accretion is the design: after
 four or five features the expert holds the business rules, the vocabulary and
 the failure modes that were learned one interview at a time, and it reviews far

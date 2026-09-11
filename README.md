@@ -20,9 +20,12 @@ spec before you build it.**
 From your shell, not inside Claude Code:
 
 ```bash
-claude plugin marketplace add francfbs/sdd-express
-claude plugin install sddx@sdd-express
+claude plugin marketplace add francfbs/sdd-express   # register the catalogue
+claude plugin install sddx@sdd-express               # install from it
 ```
+
+Both are needed on a new machine: the second command looks the plugin up in a
+local copy of the catalogue that the first one creates.
 
 Then, in a Claude Code session that is already open:
 

@@ -63,6 +63,69 @@ One concern per PR. Say what problem you hit and why this fixes it. If you
 changed a persona, include a before/after of a finding it now catches — that is
 the clearest possible evidence.
 
+## Branching and releases
+
+Plain GitHub Flow. There is no `develop` branch and no release branches — this
+is a prompt repository with no build step, and that machinery would only add
+ceremony.
+
+```
+main ──●────────●────────●──────────●──  always installable
+        \      /          \        /
+         ●────●            ●──────●       feat/… or fix/…
+```
+
+- **`main` is always installable.** It is the repository's default branch, so it
+  is what every new `/plugin install` fetches. A broken `main` is broken for
+  everyone who installs that day.
+- **One branch per change**, named `feat/<thing>` or `fix/<thing>`. Open a PR
+  even for small changes — a prose diff is far easier to judge in a PR view than
+  in an editor, and on a public repo the PR is where the reasoning is recorded.
+- **Squash on merge.** The branch's working commits are noise; the PR title and
+  body are the history worth keeping.
+
+### Releasing: bump the version, or nobody gets it
+
+This is the part that is easy to get wrong. `version` in
+`.claude-plugin/plugin.json` gates updates: Claude Code compares the installed
+version string against the manifest, and **if it has not changed, existing users
+keep their cached copy no matter how many commits you push.** New installs get
+the newest `main`; everyone already on the plugin gets nothing.
+
+So a release is two things, together:
+
+1. Bump `version` in `.claude-plugin/plugin.json`
+2. Tag the merge commit: `git tag -a v0.2.0 -m "..." && git push --tags`
+
+The tag is not what distributes the plugin — `main` does that — but it gives
+anyone who wants stability something to pin with `ref` in their own marketplace
+entry.
+
+Set `version` in `plugin.json` only. The docs are explicit that `plugin.json`
+silently wins over a version in the marketplace entry, so having both means one
+of them is a lie waiting to confuse someone.
+
+### What counts as major, minor, patch
+
+Semver on prompts needs a sharper rule than "breaking change". The one that
+matters here is **whether it breaks a feature someone has in flight**:
+
+| Bump | Means |
+|---|---|
+| **patch** | Sharper review criteria, clearer instructions, fixed wording. Behaviour is the same shape, just better. |
+| **minor** | A new command, a new persona, a new optional field in an artifact. Existing `.sdd/` directories keep working untouched. |
+| **major** | The `.sdd/` layout changes, a command is renamed or removed, or an artifact's required format changes — anything that strands someone mid-feature. |
+
+A major bump needs a migration note in the release body saying what to do with
+an open feature. Someone will be in `building` when they update.
+
+### Dogfooding
+
+The plugin is developed with itself: `.sdd/` in this repository is committed and
+public. That is deliberate — it is both the best test of the workflow and the
+clearest documentation of what its output actually looks like. A change to how a
+phase behaves should be visible in this repo's own `.sdd/` directory.
+
 ## Licence
 
 Contributions are accepted under the MIT licence.

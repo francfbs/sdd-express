@@ -13,7 +13,6 @@
       "name": "sdd-express",
       "source": "./",
       "description": "A phased feature workflow — interview, spec, plan, build, validate — with a panel of expert subagents and all state on disk.",
-      "version": "0.1.0",
       "category": "workflow",
       "keywords": [
         "spec-driven-development",

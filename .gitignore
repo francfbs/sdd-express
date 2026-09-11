@@ -1,0 +1,6 @@
+.DS_Store
+*.swp
+*~
+
+# Local Claude Code state, if you dogfood the plugin in this repo
+.claude/settings.local.json

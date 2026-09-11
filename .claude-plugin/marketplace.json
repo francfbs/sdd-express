@@ -1,0 +1,27 @@
+{
+  "name": "sdd-express",
+  "owner": {
+    "name": "Francisco B Santos",
+    "email": "francfbs@gmail.com"
+  },
+  "metadata": {
+    "description": "Spec-driven feature development workflow for Claude Code.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "sdd-express",
+      "source": "./",
+      "description": "A phased feature workflow — interview, spec, plan, build, validate — with a panel of expert subagents and all state on disk.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "keywords": [
+        "spec-driven-development",
+        "workflow",
+        "subagents",
+        "planning",
+        "qa"
+      ]
+    }
+  ]
+}

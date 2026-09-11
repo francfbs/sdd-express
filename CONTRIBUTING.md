@@ -119,6 +119,25 @@ matters here is **whether it breaks a feature someone has in flight**:
 A major bump needs a migration note in the release body saying what to do with
 an open feature. Someone will be in `building` when they update.
 
+### Never rename the plugin
+
+`version` gates updates, but the plugin's **name** is its identity: it is how
+installed copies are addressed (`sddx@sdd-express`), and it is the namespace on
+every command and agent the plugin provides. Renaming it strands everyone who
+already installed — their `/plugin update` finds nothing, because the name they
+installed no longer exists in the catalogue. They have to uninstall and
+reinstall:
+
+```bash
+> /plugin uninstall <old-name>@sdd-express
+> /plugin install sddx@sdd-express
+```
+
+This happened once, between v0.1.0 and v0.2.0, when the plugin was renamed from
+`sdd-express` to `sddx` to fix the command namespace. It was safe only because
+the plugin was hours old and nobody had installed it. Treat the name as frozen
+from here.
+
 ### Dogfooding
 
 The plugin is developed with itself: `.sdd/` in this repository is committed and

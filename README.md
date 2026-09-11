@@ -54,6 +54,24 @@ repo's own `.claude/agents/`. That is how this project gets a domain expert that
 knows your business instead of the plugin's generic one — and it is yours to
 edit or delete.
 
+### Updating
+
+```bash
+> /plugin marketplace update sdd-express   # refresh the catalogue
+> /plugin update sddx                      # update the plugin
+> /reload-plugins                          # apply it to the running session
+```
+
+**Auto-update is off by default for third-party marketplaces like this one**, so
+nothing arrives on its own. To have it keep itself current, run `/plugin`, go to
+the **Marketplaces** tab, select `sdd-express`, and choose **Enable auto-update**.
+Claude Code then refreshes shortly after each session starts and tells you when
+to reload.
+
+Updates are gated on the plugin's `version`, so you only receive a release when
+that field is bumped — pushing commits alone changes nothing for anyone already
+installed.
+
 ---
 
 ## The flow

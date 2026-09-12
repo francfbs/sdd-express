@@ -32,6 +32,7 @@ messages stay in English regardless. Never announce this rule — just follow it
       progress.md      the ledger — phase, gates, task status, decision log
       questions.md     open questions and resolved decisions with rationale
       spec.md          the contract: what gets built and how you know it works
+      context.md       the briefing pack the panel reads instead of the codebase
       tasks.md         ordered, dependency-aware, each with acceptance criteria
       reviews/         one file per panel member, per round
         <persona>-r<n>.md
@@ -45,6 +46,40 @@ messages stay in English regardless. Never announce this rule — just follow it
 The **active feature** is whichever slug is named in `.sdd/ACTIVE`. That file
 holds one line: the slug. `/sddx:new` writes it, `/sddx:archive` clears it.
 If `.sdd/ACTIVE` is missing or empty, there is no active feature.
+
+## Size: the triage that decides how much workflow to spend
+
+Not every feature deserves the same machinery. A spec-driven workflow that costs
+the same for a known integration as for a new business rule gets abandoned —
+which is the real failure mode, worse than a thin spec.
+
+So every feature is classified **once, at `/sddx:new`, before the interview**,
+and the class is written into `progress.md` as `size:`. Classify by asking what
+could go wrong, not by counting files:
+
+| Size | The feature is… | Interview | Panel | Rounds | Domain expert |
+|---|---|---|---|---|---|
+| `express` | a known shape with known answers — a documented integration, a CRUD surface over an existing model, a version bump, a change with an obvious correct implementation | 1 round | 2 members | 1 | not distilled |
+| `standard` | ordinary product work — new behaviour in a domain the project already models | 2–3 rounds | 3 members | 1, plus 2 on trigger | enriched |
+| `deep` | genuinely uncertain — a new business rule nobody has stated, a redesign, something regulated, something irreversible, or a problem the user cannot yet describe in one paragraph | until it stops changing the design | up to 6 | 2 | distilled or enriched, always shown |
+
+**What moves a feature up:** money, personal or regulated data, an irreversible
+migration, a boundary between teams, or a user who is unsure what they want.
+**What does not:** the number of files, the size of the diff, or how new the
+library is to you. A Supabase login integration is `express` on the domain and
+`standard` at most — the questions are about *this project's* choices (which
+identity providers, what happens to existing users, where the session lives),
+not about how Supabase works.
+
+**Say the class out loud and let the user override it.** One line: what you
+picked, why, and that `/sddx:new <name> --deep` (or `--express`) overrides it.
+Record the class and its reason in the decision log. A misclassification is
+cheap to fix at discovery and expensive to fix at build.
+
+**Upgrading mid-flight is allowed and expected.** If the interview or round 1 of
+the panel turns up a real unknown, say that the feature just became `standard`
+or `deep`, update `size:`, log why, and spend the extra rounds. Downgrading is
+not: once a feature has shown you it is uncertain, it stays that way.
 
 ## The phases and their gates
 
@@ -79,6 +114,7 @@ block exactly in this shape so it can be parsed:
 
 - **slug:** <slug>
 - **phase:** discovery | spec | planning | building | validation | done
+- **size:** express | standard | deep
 - **updated:** YYYY-MM-DD
 ```
 
@@ -156,20 +192,98 @@ user.** They critique; they do not interview and they do not decide.
 
 ### Choosing who sits on the panel
 
-Do not convene all seven every time — it is noise and it is slow. Pick by what
-the feature actually touches:
+A panel member is a cold subagent: it costs a full context window to tell it
+what you already know. So the panel is **capped by the feature's size**, and the
+cap is a real limit, not a suggestion:
 
-| Convene | When the feature… |
+| Size | Members | Exceeding the cap |
+|---|---|---|
+| `express` | 2 | not allowed — if you need a third, the feature is `standard` |
+| `standard` | 3 | a 4th requires one line saying what it sees that the other three cannot |
+| `deep` | up to 6 | say why each one is there |
+
+Fill the seats in this order, stopping when the cap is reached:
+
+1. **`sddx:sdd-qa-engineer` — always the first seat.** A spec whose criteria
+   cannot be checked fails at every later phase, so this is the one review no
+   feature can skip.
+2. **The discipline carrying this feature's largest risk** — whichever single row
+   below fits hardest. Not all the rows that technically apply: the one that
+   would hurt most if it were wrong.
+3. **`sdd-domain-expert`**, when the feature has business rules that could be
+   wrong in a way code review would not catch. A pure integration with no rules
+   of its own does not need it, and a generic domain review of one is noise.
+
+| Seat 2 candidate | When the feature… |
 |---|---|
-| `sdd-domain-expert` | always — every feature has a business domain |
-| `sddx:sdd-ux-designer` | has any user-facing surface, including CLI output and error text |
-| `sddx:sdd-systems-architect` | crosses a process/service/network boundary, adds infrastructure, or changes how data is stored or deployed |
-| `sddx:sdd-code-designer` | introduces a new module, abstraction, or public API within the codebase |
-| `sddx:sdd-qa-engineer` | always — every feature needs to be verifiable |
 | `sddx:sdd-security-reviewer` | touches auth, permissions, personal or regulated data, payments, file upload, or anything reachable by an untrusted caller |
-| `sddx:sdd-tech-writer` | only at `/sddx:archive`, to write the changelog |
+| `sddx:sdd-ux-designer` | has a user-facing surface whose states and error text are the hard part, including CLI output |
+| `sddx:sdd-systems-architect` | crosses a process/service/network boundary, adds infrastructure, or changes how data is stored, migrated or deployed |
+| `sddx:sdd-code-designer` | introduces a new module, abstraction, or public API within the codebase |
+| `sddx:sdd-tech-writer` | only at `/sddx:archive`, to write the changelog — never a panel seat |
 
-State which members you convened and why, in one line, before dispatching.
+State which members you convened, which seat each fills, and what you left out,
+in one line, before dispatching. Naming the omission matters: it lets the user
+add a seat back when they know something you do not.
+
+### The briefing pack — write `context.md` before dispatching
+
+**Never send a panel member to read the codebase itself.** Six members each
+grepping for the same auth configuration is the same reading paid six times, and
+it is the single largest cost in this workflow.
+
+Instead, the main thread reads once and writes
+`.sdd/features/<slug>/context.md` before the first dispatch:
+
+```markdown
+# Briefing — <feature>
+
+## Stack and conventions
+The versions, frameworks and local rules that constrain this feature. Quote the
+relevant lines of CLAUDE.md rather than pointing at the file.
+
+## How this project is checked
+The exact test, lint, type-check and build commands. Every reviewer needs these
+and every one of them would otherwise go hunting for them separately.
+
+## What already exists
+The files this feature touches or reuses, each with a path, the line range that
+matters, and one line on what it does.
+
+## Configuration that bears on this feature
+The actual auth setup, policies, schema, env contract — pasted, not referenced.
+Whatever the panel would otherwise go looking for.
+
+## Decisions already settled
+The decision log entries that close questions, so nobody re-opens them.
+
+## What we deliberately do not know yet
+The open non-blocking questions, so a member does not report them as findings.
+```
+
+Write it once per feature and **extend it** at `/sddx:plan` and `/sddx:build`
+rather than rewriting it. It is the same briefing every later phase needs.
+
+Panel members read: `spec.md` (or the diff), `context.md`, and **at most five
+files that `context.md` names by path**. No repo-wide sweeps, no reading to
+build general familiarity. If `context.md` was missing something they needed,
+that is a finding to report — and a gap for you to fix in the pack, once, for
+everyone.
+
+### The budget every member works under
+
+Include these limits verbatim in every dispatch. They are what keeps a critic
+from turning its checklist into an exhaustive survey:
+
+- **At most 8 tool calls.** Reading is not the job; judgement is.
+- **At most 3 blocking findings and 3 non-blocking ones.** If there are more,
+  report the 3 that matter and say the count you are withholding.
+- **Review file: 400 words maximum.** Returned summary: 10 lines maximum.
+- **Report nothing already settled in the decision log**, and nothing listed
+  under "what we deliberately do not know yet".
+
+A member that finds nothing blocking should say so in two lines and stop. That
+is a successful review, and it costs almost nothing.
 
 ### The domain expert is per-project, and it accumulates
 
@@ -216,10 +330,11 @@ Dispatch every chosen member **in one message, in parallel** — a round costs t
 wall-clock time of its slowest member, not the sum. Give each the same payload:
 
 1. The full current draft of `spec.md` (or the diff under review, for build/QA)
-2. The relevant part of `progress.md` decision log, so they do not re-litigate
-   what is already settled
-3. The project's `CLAUDE.md` path, if one exists, so they respect local rules
-4. One question, scoped to their discipline
+2. The path to `context.md`, and the instruction that it replaces exploring the
+   codebase — at most five files beyond it, all named there
+3. One question, scoped to their discipline and to *this* feature. A question
+   narrow enough to be answered wrong is worth ten generic ones
+4. The budget above, verbatim
 
 Each member writes its findings to `.sdd/features/<slug>/reviews/<persona>-r<n>.md`
 and returns a short summary. You then **consolidate**: merge overlapping findings,
@@ -235,10 +350,28 @@ Never dump raw panel output at the user. Consolidation is your job.
 
 ### Rounds
 
-Round 1 on the first draft. If round 1 produced substantive changes, run round 2
-on the revised draft with the same members. Stop at round 2 unless the user asks
-for more — a third round on a spec is almost always sharpening prose, not
-finding holes.
+**Round 1 always. Round 2 is the exception, not the default.**
+
+The old rule — "run round 2 if round 1 changed something" — means always, because
+round 1 always changes something. The trigger is narrower:
+
+> Run round 2 only when resolving round 1 **changed an acceptance criterion, the
+> scope boundary, or a decision the spec rests on** — a change big enough that
+> round 1's reviews were written against a different contract.
+
+Copy-edits, added detail, closed assumptions and answered questions do not
+qualify. Neither does the feeling that another pass might find more.
+
+When round 2 does run:
+
+- `express` never runs one. If an express feature needs a second round, say it
+  was misclassified, move it to `standard`, and log that.
+- Re-dispatch **only the members whose findings drove the change**, not the whole
+  panel. A reviewer whose round-1 review is still accurate has nothing to add.
+- Send the **diff of what changed** plus the revised spec, not just the spec.
+  Ask one question: does this resolution hold?
+
+Stop at round 2 always. A third round sharpens prose; it does not find holes.
 
 ## Rules that keep this from degrading
 
@@ -257,3 +390,12 @@ finding holes.
    It does not get quietly implemented.
 7. **The spec is the contract, not the code.** If the code has to diverge from
    the spec, update the spec in the same change.
+8. **Each phase is worth a fresh session.** The artifacts exist precisely so a
+   phase does not need the previous phase's transcript — carrying a discovery
+   interview into every panel dispatch and consolidation pays for it again on
+   every turn. When a command ends and hands off to the next one, say so: "the
+   ledger has everything — `/clear` before `/sddx:spec` if you like." Say it
+   once, as an aside, and never nag.
+9. **Spend where uncertainty is.** Every round, every seat and every question in
+   this protocol is a cost the user pays. If you cannot say what a review would
+   change, do not run it — an abandoned workflow finds no holes at all.

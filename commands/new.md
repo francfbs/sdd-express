@@ -25,7 +25,23 @@ If this is the first feature in the project, also create `.sdd/README.md` with
 two sentences explaining what the directory is, so a teammate who finds it in a
 diff understands it.
 
-## 3. Interview the user
+## 3. Triage the size — before asking anything
+
+Read the protocol's size table and classify this feature `express`, `standard`
+or `deep`. Write it into `progress.md` as `size:` and log the reason in one line.
+
+`$ARGUMENTS` may end with `--express` or `--deep`; that is the user's call and it
+overrides yours. Log it as an override.
+
+Tell the user in one line what you picked, why, and what it buys them — "express:
+integration with a documented product, so one round of questions and a two-member
+panel; say `--deep` if you want the full treatment." Then go.
+
+Getting this wrong in the cheap direction is recoverable: you can upgrade at any
+point in the interview, and the protocol expects you to. Getting it wrong in the
+expensive direction burns a morning the user does not get back.
+
+## 4. Interview the user
 
 This is the real work of this command. Your goal is a problem you understand
 well enough to spec — not a solution.
@@ -34,6 +50,16 @@ well enough to spec — not a solution.
 enough of the project to know what exists. Every question you can answer by
 reading is a question you must not ask. Nothing burns a user's patience faster
 than being asked what their stack is.
+
+**Let the size govern the depth.** `express` gets one round of three or four
+questions. `standard` gets two or three. `deep` runs until the marginal question
+stops changing the design. Do not run a `deep` interview on an `express`
+feature because the topic is interesting.
+
+**For a feature built on a product you already know**, the questions are about
+*this project's* choices, never about the product. Which providers, what happens
+to the users who already exist, where the session lives, who gets locked out
+when it fails — not how the library works. You can read that.
 
 **Ask in rounds of three or four questions, as multiple choice**, using
 `AskUserQuestion`. Offer real options with real trade-offs — your best
@@ -79,12 +105,20 @@ mentally as you hear them. Step 4 turns them into the project's domain expert.
 If an answer is one short follow-up away from being a durable domain fact, ask
 the follow-up. It is the cheapest knowledge you will ever capture.
 
-## 4. Distil the domain expert
+## 5. Distil the domain expert
 
-The panel's `sdd-domain-expert` ships generic, and generic domain findings are
-worthless. You have just spent an interview learning this business — turn that
-into the project's own expert. A project agent is dispatchable under its bare
-name, so the file takes effect with nothing to register.
+**Skip this step entirely when the feature is `express`.** An express feature is
+one whose answers were already known — it has, by definition, taught you nothing
+durable about the business. Say in one line that you skipped it and why. This
+step is 40 lines of work and a whole file of output; spending it on a login
+integration produces a padded persona nobody will ever re-read, and a padded
+persona is worse than the generic one.
+
+For `standard` and `deep`: the panel's `sdd-domain-expert` ships generic, and
+generic domain findings are worthless. You have just spent an interview learning
+this business — turn that into the project's own expert. A project agent is
+dispatchable under its bare name, so the file takes effect with nothing to
+register.
 
 Read `.claude/agents/sdd-domain-expert.md`.
 
@@ -119,7 +153,8 @@ is meant to accumulate across features, and its value comes from that accretion.
 
 **Then show the user** the "What you know" and vocabulary sections — those are
 the parts they can judge — and ask what is wrong or missing. A distilled expert
-always gets one thing subtly wrong on the first pass, and it is always here.
+always gets one thing subtly wrong on the first pass, and it is always here. On
+a `standard` feature that only added a line or two, show the additions alone.
 
 If the interview did not yield enough durable domain knowledge to be worth a
 file — a small internal tool, a purely technical change — say so and skip this
@@ -128,12 +163,14 @@ than the generic one, because nobody re-reads it.
 
 Log what you did in the decision log, one line.
 
-## 5. Close discovery
+## 6. Close discovery
 
 When only non-blocking questions remain:
 
 - Write a summary paragraph into `progress.md`
 - Record the decisions taken so far in the decision log
+- Confirm `size:` still reflects what the interview revealed; if it does not,
+  upgrade it and log why
 - Update `updated:` to today
 
 Then show the user a **short** recap: the problem in one paragraph, the three
@@ -141,4 +178,6 @@ to five decisions that shape the feature, and anything still open. Ask them to
 correct it.
 
 Do not write `spec.md` and do not advance the phase. Tell them to run
-`/sddx:spec` when the recap looks right.
+`/sddx:spec` when the recap looks right — and mention once, as an aside, that
+the ledger holds everything, so `/clear` first costs them nothing and keeps the
+whole interview from riding along through the spec phase.

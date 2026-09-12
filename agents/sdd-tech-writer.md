@@ -57,6 +57,12 @@ Not a reviewer of substance. Do not question whether the feature is a good idea,
 whether the architecture holds, or whether the domain rules are right. Other
 members do that.
 
+## Your budget
+
+Everything you read, the dispatcher already read and paid for. Read `context.md`
+rather than the codebase, open at most five further files named there, and stay
+within 8 tool calls. Keep what you return to 10 lines.
+
 ## What you produce
 
 For job 1: the edited `spec.md`, plus a review file listing what you changed and

@@ -105,7 +105,7 @@ installed.
 ## The flow
 
 ```
-/sddx:new <feature>     discovery   Claude reads your codebase, then interviews you
+/sddx:new <feature>     discovery   Claude sizes the feature, then interviews you
                                     in short rounds of multiple-choice questions.
                          │          Answers and rejected options land in questions.md,
                          │          and the domain expert is distilled from what you said.
@@ -135,6 +135,38 @@ installed.
 `/sddx:status` works at any point and tells you exactly where you are and what to
 run next — written for someone who has been away for two weeks.
 
+**Run each phase in a fresh session.** The ledger exists so a phase does not need
+the previous phase's transcript — `/clear` between commands and the discovery
+interview stops riding along through every panel dispatch that follows. Each
+command tells you when it is safe, which is: always.
+
+---
+
+## Not every feature gets the full treatment
+
+A workflow that costs the same for a documented integration as for a new
+business rule gets abandoned, and an abandoned workflow finds no holes at all.
+So `/sddx:new` **sizes the feature first** and the size governs everything after:
+
+| Size | The feature is… | Interview | Panel | Rounds |
+|---|---|---|---|---|
+| `express` | a known shape with known answers — a documented integration, CRUD over an existing model, an obvious implementation | 1 round | 2 members | 1 |
+| `standard` | ordinary product work in a domain the project already models | 2–3 rounds | 3 members | 1, plus 2 on trigger |
+| `deep` | genuinely uncertain — a new business rule, a redesign, something regulated or irreversible | until it settles | up to 6 | 2 |
+
+What moves a feature up is risk — money, personal data, an irreversible
+migration, a user who is not yet sure what they want. Not the size of the diff,
+and not how new the library is to you.
+
+Claude says which class it picked and why, and you override it with
+`/sddx:new <name> --deep` or `--express`. It can upgrade mid-flight when the
+interview turns up a real unknown; it never downgrades.
+
+```
+/sddx:new supabase-login              → express: 1 round, QA + security, done before lunch
+/sddx:new consultation-billing        → deep:    the rules are the feature
+```
+
 ---
 
 ## The panel
@@ -153,9 +185,27 @@ costs the wall-clock time of its slowest member rather than the sum.
 | `sddx:sdd-security-reviewer` | Authorization per operation, object-level access, tenant isolation, where sensitive data leaks into logs and errors |
 | `sddx:sdd-tech-writer` | Ambiguity that will become a bug; and at archive time, the changelog and doc deltas |
 
-Only the relevant ones are convened. A pure-backend feature does not need the UX
-designer; a feature that touches no auth and no personal data does not need the
-security reviewer.
+**Seats are capped, and they are filled in order.** QA takes the first seat
+always — a spec whose criteria cannot be checked fails at every later phase. The
+second goes to whichever discipline carries this feature's largest risk, not
+every discipline that technically applies. The domain expert takes the third
+when the feature has business rules that could be wrong in a way code review
+would not catch. Claude says who it convened *and who it left out*, so you can
+add a seat back when you know something it does not.
+
+Each member works to a **briefing pack** — `context.md`, written once by the main
+thread with the stack, the configuration, the files that matter and the decisions
+already settled — rather than exploring your repo itself. Six critics each
+grepping for the same auth configuration is the same reading paid six times, and
+it was by far the largest cost in this workflow.
+
+They also work to a budget: 8 tool calls, at most three blocking findings, 400
+words. Finding nothing blocking is a real outcome, and a cheap one.
+
+**Round 2 is the exception, not the default.** It runs only when resolving round 1
+changed an acceptance criterion, the scope boundary, or a decision the spec rests
+on — and then only the members whose findings drove the change. Copy-edits and
+added detail do not qualify.
 
 **They critique; they never decide.** Panel members run in isolation and cannot
 talk to you. Claude consolidates their findings, fixes what it can, and brings
@@ -172,9 +222,10 @@ On disk, in your repo, in plain Markdown:
 .sdd/
   ACTIVE                     the slug of the feature in progress
   features/<slug>/
-    progress.md              phase, gates, task status, and an append-only decision log
+    progress.md              phase, size, gates, task status, and an append-only decision log
     questions.md             every question asked — resolved ones keep their rejected options
     spec.md                  the contract: behaviour, acceptance criteria, out of scope
+    context.md               the briefing pack the panel reads instead of your codebase
     tasks.md                 ordered tasks, dependencies, acceptance criteria
     reviews/                 every panel review, by persona and round
   archive/<slug>/            finished features, kept whole
@@ -274,6 +325,10 @@ sitting, because nobody knows all of it up front.
 You are shown the knowledge sections each time and asked what is wrong — a
 distilled expert always gets one thing subtly wrong, and it is always there.
 
+`express` features skip this step. They are the ones whose answers were already
+known, so they have nothing durable to teach — and a padded persona is worse than
+the generic one, because nobody re-reads it.
+
 `/sddx:expert` is the manual door onto the same file: inspect what it knows,
 correct it, build one up front, or add a second expert for a distinct domain
 (`sdd-domain-expert-billing` alongside `sdd-domain-expert-clinical`).
@@ -282,9 +337,14 @@ correct it, build one up front, or add a second expert for a distinct domain
 
 ## Customising it
 
-**Tune the models.** Agents default to `inherit` for the expensive judgement
-calls (domain, architecture, security) and `sonnet` for the rest. Change the
-`model:` field in any agent to trade cost against depth.
+**Tune the models.** Every agent defaults to `sonnet` — a critic reading a
+two-page spec against a briefing pack does not need more. Set `model: inherit`
+on the domain expert, architect or security reviewer to spend your session's
+model on the judgement calls you care most about.
+
+**Tune the budget.** The tool-call and finding limits live in each agent's *Your
+budget* section, and the seat caps live in the protocol's size table. Raise them
+for a project where a missed finding costs more than a long morning.
 
 **Adjust the protocol.** Everything the workflow believes about phases, gates
 and artifact formats lives in one file: `skills/sdd-protocol/SKILL.md`. Commands

@@ -2,6 +2,7 @@
 
 - **slug:** {{SLUG}}
 - **phase:** discovery
+- **size:** {{express | standard | deep}}
 - **updated:** {{DATE}}
 
 ## Summary

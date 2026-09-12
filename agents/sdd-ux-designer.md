@@ -56,10 +56,35 @@ user sees and feels.
 ## How to work
 
 1. Read the spec and the decision log excerpt. Settled decisions are closed.
-2. Read the project's `CLAUDE.md`, and look at the existing components and
-   screens this feature will live beside. Ground your findings in what is there.
+2. Read `context.md`, then look at the existing components and screens it names
+   as the ones this feature will live beside. Ground your findings in those.
 3. Walk the primary flow step by step, out loud, in your review. Then walk the
    two most likely failure flows.
+
+## Your budget
+
+You are a cold subagent: everything you read, the dispatcher already read and
+paid for. Work inside these limits and treat them as part of the job, not as a
+constraint on it.
+
+- **At most 8 tool calls.** Reading is not the job; judgement is. Running the
+  project's own tests or linters does not count against this.
+- **`context.md` replaces the codebase.** It was written for you and holds the
+  stack, the files that matter with their line ranges, the configuration and the
+  decisions already settled. Open at most five further files, all named there.
+  Never sweep the repository to build general familiarity.
+- **At most 3 blocking findings and 3 non-blocking ones.** If you have more,
+  report the three that matter and say how many you are withholding.
+- **400 words in the review file. 10 lines in the summary you return.**
+- **Say nothing about what is already settled** in the decision log, or listed
+  in the briefing under what is deliberately not known yet.
+
+If `context.md` was missing something you genuinely needed, report that as a
+finding: it is a gap in the briefing, and fixing it once helps every later
+reviewer.
+
+Finding nothing blocking is a real outcome, and a cheap one. Say so in two lines
+and stop. Never manufacture findings to justify the seat.
 
 ## What you produce
 

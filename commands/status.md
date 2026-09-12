@@ -19,7 +19,8 @@ and `.sdd/archive/` and stop.
 Read `progress.md`, `tasks.md` and `questions.md`. Then give the user a briefing
 that stands on its own — assume they have been away for two weeks:
 
-1. **Feature and phase** — one line, plus how long since `updated:`.
+1. **Feature and phase** — one line, plus its `size:` and how long since
+   `updated:`. The size tells them how much workflow is still ahead.
 2. **What it is** — the summary paragraph, as written.
 3. **Gates** — which are ticked, which is next.
 4. **Tasks** — counts by status, then the specific tasks that are

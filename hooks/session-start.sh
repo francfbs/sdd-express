@@ -15,9 +15,10 @@ prog=".sdd/features/${slug}/progress.md"
 [ -f "$prog" ] || exit 0
 
 phase=$(grep -m1 'phase:' "$prog" 2>/dev/null | sed 's/.*phase:[^ ]*[[:space:]]*//' | tr -d '*' | tr -d '[:space:]')
+size=$(grep -m1 'size:' "$prog" 2>/dev/null | sed 's/.*size:[^ ]*[[:space:]]*//' | tr -d '*' | tr -d '[:space:]')
 
 cat <<EOF
-## Active sdd-express feature: ${slug} (phase: ${phase:-unknown})
+## Active sdd-express feature: ${slug} (phase: ${phase:-unknown}, size: ${size:-unclassified})
 
 This project has a spec-driven feature in progress. Its ledger is \`${prog}\`,
 and the spec, questions and tasks sit beside it in \`.sdd/features/${slug}/\`.

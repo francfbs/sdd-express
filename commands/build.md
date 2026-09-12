@@ -55,12 +55,19 @@ Read the code around where it lands and follow the conventions in force —
 
 ### 3c. Review the diff
 
-Dispatch `sddx:sdd-qa-engineer` on the diff with the task, its acceptance criterion,
-and its review file path (`reviews/qa-<task-id>.md`).
+Dispatch `sddx:sdd-qa-engineer` on the diff with the task, its acceptance
+criterion, the path to `context.md`, its review file path
+(`reviews/qa-<task-id>.md`) and the protocol's budget verbatim.
 
 Dispatch `sddx:sdd-security-reviewer` **in the same message** if the task touches
 auth, permissions, personal or regulated data, payments, upload, or an untrusted
 input path.
+
+**On an `express` feature, review the diff yourself** against the task's
+acceptance criterion and the tests you just ran, and dispatch QA only when the
+diff touches something the criterion does not fully pin down. A per-task
+subagent on a task whose tests already pass is the most repeated cost in a build
+run — it fires once per task, not once per feature.
 
 Fix what they find that is real. If you disagree with a finding, say why rather
 than silently ignoring it.

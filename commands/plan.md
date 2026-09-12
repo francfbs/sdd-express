@@ -15,9 +15,14 @@ Read `.sdd/ACTIVE` and `progress.md`.
 
 ## 2. Understand the ground before you plan
 
-Read `CLAUDE.md`, the modules this feature touches, the existing patterns for
-this kind of work, and how the project tests and builds. A plan that ignores
-the codebase produces tasks that dissolve on contact with it.
+Start from `context.md` — the spec phase wrote it precisely so this phase does
+not repeat that reading. Then fill only what planning needs and the briefing
+lacks: how the project tests and builds, and the existing patterns for this kind
+of work. A plan that ignores the codebase produces tasks that dissolve on
+contact with it.
+
+**Append what you learn back into `context.md`.** It is the briefing for every
+later phase, and build will need exactly this.
 
 Note what already exists that this feature should reuse. That shapes the tasks
 more than anything else.
@@ -45,19 +50,26 @@ Write `tasks.md` from the protocol template.
 
 ## 4. Panel review of the plan
 
-Dispatch **in parallel, in one message**:
+The plan panel is smaller than the spec panel — the contract is already settled,
+and what is under review is coverage and order.
 
-- `sddx:sdd-code-designer` — task boundaries, reuse, order, abstractions that should
-  not exist
-- `sddx:sdd-qa-engineer` — criteria coverage, untestable tasks, missing edge cases
-- `sddx:sdd-systems-architect` — only if the feature touches infrastructure, data
-  migration, or a service boundary
+- `express` — **no panel.** Check the two invariants yourself: every task maps to
+  a criterion, every criterion is covered by a task. Say you skipped the panel
+  and why.
+- `standard` — `sddx:sdd-qa-engineer` alone: criteria coverage, untestable tasks,
+  missing edge cases.
+- `deep` — add `sddx:sdd-code-designer` (task boundaries, reuse, order,
+  abstractions that should not exist), and `sddx:sdd-systems-architect` only if
+  the feature touches infrastructure, data migration, or a service boundary.
 
-Give each the spec, the draft `tasks.md`, the decision log, and their review
-file path (`reviews/<persona>-plan.md`).
+Dispatch **in parallel, in one message**. Give each the spec, the draft
+`tasks.md`, the path to `context.md` in place of the codebase, their review file
+path (`reviews/<persona>-plan.md`), and the protocol's budget verbatim.
 
 Consolidate as the protocol describes. Apply what you agree with, take genuine
-choices to the user as multiple choice, and log the decisions.
+choices to the user as multiple choice, and log the decisions. There is no
+second round at planning: a plan that needs one has a spec problem, so say that
+instead.
 
 ## 5. Close planning
 
@@ -68,4 +80,5 @@ Show the user the task list — ID, title, what it satisfies — plus the total
 count and which tasks are on the critical path. Ask if the order is right; they
 often know a sequencing constraint you cannot see.
 
-Then tell them to run `/sddx:build`.
+Then tell them to run `/sddx:build` — `/clear` first if the planning
+conversation ran long, since `tasks.md` and `context.md` carry it all.

@@ -32,18 +32,23 @@ unimplemented, because no task felt like it owned them.
 
 ## 3. Panel validation
 
-Dispatch **in parallel, in one message**:
+Dispatch **in parallel, in one message**, within the cap for this feature's
+`size:` — 2 for `express`, 3 for `standard`, up to 6 for `deep`:
 
-- `sddx:sdd-qa-engineer` — the whole diff against the whole spec, tests run
-- `sdd-domain-expert` — does the built behaviour match how the domain really
-  works, now that it is real rather than described
+- `sddx:sdd-qa-engineer` — the whole diff against the whole spec, tests run.
+  Always the first seat
 - `sddx:sdd-security-reviewer` — if the feature touches auth, permissions, personal
   or regulated data, payments, upload, or untrusted input
 - `sddx:sdd-ux-designer` — if there is a user-facing surface; ask specifically about
   the states that only became visible once it was built
+- `sdd-domain-expert` — does the built behaviour match how the domain really
+  works, now that it is real rather than described. Skip it where the feature had
+  no domain rules of its own
 
-Give each the spec, the full feature diff, the decision log and a review file
-path (`reviews/<persona>-validation.md`).
+Give each the spec, the full feature diff, the path to `context.md`, a review
+file path (`reviews/<persona>-validation.md`) and the protocol's budget verbatim.
+
+Validation is one round. What it finds becomes tasks, not another review.
 
 ## 4. Report
 

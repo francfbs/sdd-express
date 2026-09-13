@@ -2,83 +2,65 @@
 description: Turn the approved spec into ordered tasks with verifiable acceptance criteria
 ---
 
-Read the `sdd-protocol` skill first. Follow it exactly.
+Read the `sdd-protocol` skill, then its `artifacts.md` reference.
 
 ## 1. Gate
 
 Read `.sdd/ACTIVE` and `progress.md`.
 
 - No active feature → `/sddx:new`. Stop.
-- `spec.md` is not `approved` → say so, tell them to run `/sddx:spec`. Stop.
-  Do not plan against a draft spec; that is how the plan and the contract drift.
-- Already in `building` → say so and point at `/sddx:build` or `/sddx:status`. Stop.
+- `spec.md` is not `approved` → say so, point at `/sddx:spec`. Stop. Planning
+  against a draft is how the plan and the contract drift.
+- Already `building` → point at `/sddx:build` or `/sddx:status`. Stop.
 
-## 2. Understand the ground before you plan
+## 2. Ground the plan
 
-Start from `context.md` — the spec phase wrote it precisely so this phase does
-not repeat that reading. Then fill only what planning needs and the briefing
-lacks: how the project tests and builds, and the existing patterns for this kind
-of work. A plan that ignores the codebase produces tasks that dissolve on
-contact with it.
+Start from `context.md`; the spec phase wrote it so this phase does not repeat
+that reading. Fill only what planning needs and the briefing lacks, and
+**append it to `context.md`** — every implementer will read it:
 
-**Append what you learn back into `context.md`.** It is the briefing for every
-later phase, and build will need exactly this.
-
-Note what already exists that this feature should reuse. That shapes the tasks
-more than anything else.
+- **the check commands** — the targeted form for one area and the full form,
+  both with quiet output. Implementers cannot verify anything without these
+- the existing patterns for this kind of work
+- what already exists that this feature should reuse — it shapes the tasks more
+  than anything else
 
 ## 3. Write the tasks
 
-Write `tasks.md` from the protocol template.
+Write `tasks.md` from the template, sized as `artifacts.md` describes: **one
+implementer dispatch per task, and as few, as vertical, as that allows.** The
+size table in the protocol gives the target count; every task carries fixed
+overhead whatever its size.
 
-- **Every task maps to at least one acceptance criterion.** A task satisfying
-  none is either scope creep or evidence of a criterion missing from the spec —
+- **Every task maps to at least one criterion**, and **every criterion is covered
+  by a task.** A task satisfying none is scope creep or a missing criterion —
   resolve which, out loud.
-- **Every criterion is covered by at least one task.** List any that are not;
-  that is a hole in the plan, not something to paper over.
-- **One sitting per task.** More than ~5 files, or spanning layers without a
-  reason, means split it.
-- **Order by dependency**, and prefer an order where something demonstrable
-  works early. A vertical slice that runs beats three horizontal layers that
-  only work once all three land.
-- **Acceptance criteria are verifiable**: a test that fails before and passes
-  after, a command whose output changes, a behaviour that can be driven. Not
-  "code is clean".
-- Include the unglamorous tasks — migration, rollback, telemetry, docs — when
-  the spec's non-functional requirements imply them. They are where plans
-  usually lie by omission.
+- **`touches` with line ranges** where files are large. It is what the implementer
+  reads.
+- **Acceptance is verifiable** — a test that fails before and passes after, a
+  command whose output changes, a behaviour that can be driven.
+- **Order by dependency**, with something demonstrable working early.
+- Include the unglamorous work — migration, rollback, telemetry, docs — when the
+  non-functional requirements imply it. Fold it into the slice it belongs to
+  rather than giving it a task of its own.
 
-## 4. Panel review of the plan
+## 4. Review the plan
 
-The plan panel is smaller than the spec panel — the contract is already settled,
-and what is under review is coverage and order.
+Read `panel.md` for the plan seats. `express` has none: check the two coverage
+invariants yourself and say you did. Otherwise dispatch as `panel.md` describes,
+with review files `reviews/<persona>-plan.md`, and consolidate.
 
-- `express` — **no panel.** Check the two invariants yourself: every task maps to
-  a criterion, every criterion is covered by a task. Say you skipped the panel
-  and why.
-- `standard` — `sddx:sdd-qa-engineer` alone: criteria coverage, untestable tasks,
-  missing edge cases.
-- `deep` — add `sddx:sdd-code-designer` (task boundaries, reuse, order,
-  abstractions that should not exist), and `sddx:sdd-systems-architect` only if
-  the feature touches infrastructure, data migration, or a service boundary.
-
-Dispatch **in parallel, in one message**. Give each the spec, the draft
-`tasks.md`, the path to `context.md` in place of the codebase, their review file
-path (`reviews/<persona>-plan.md`), and the protocol's budget verbatim.
-
-Consolidate as the protocol describes. Apply what you agree with, take genuine
-choices to the user as multiple choice, and log the decisions. There is no
-second round at planning: a plan that needs one has a spec problem, so say that
+No second round at planning. A plan that needs one has a spec problem — say that
 instead.
 
 ## 5. Close planning
 
-Mirror the task table into `progress.md`, tick the `planning` gate, set phase to
-`building`, update `updated:`.
+Tick the `planning` gate, set phase to `building`, update `updated:`. Task status
+lives in `tasks.md` only; do not copy it into `progress.md`.
 
-Show the user the task list — ID, title, what it satisfies — plus the total
-count and which tasks are on the critical path. Ask if the order is right; they
-often know a sequencing constraint you cannot see.
+Show the user the tasks — ID, title, what each satisfies — the count, and the
+critical path. Ask if the order is right; they often know a sequencing
+constraint you cannot see.
 
-Then tell them to run `/sddx:build` — `/clear` first if the planning
-conversation ran long, since `tasks.md` and `context.md` carry it all.
+Then point at `/sddx:build` — after a `/clear`, since `tasks.md` and `context.md`
+carry it all.

@@ -18,13 +18,6 @@ has never seen it understands the point in 20 seconds.}}
 - [ ] `building` — every task done or dropped
 - [ ] `validation` — every acceptance criterion verified against real code
 
-## Tasks
-
-_Populated by `/sddx:plan`._
-
-| ID | Task | Status | Satisfies |
-|----|------|--------|-----------|
-
 ## Panel
 
 _Which experts were convened, and in which round._

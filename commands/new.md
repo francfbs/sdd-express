@@ -5,8 +5,9 @@ argument-hint: <feature name>
 
 Start a new feature: **$ARGUMENTS**
 
-First, read the `sdd-protocol` skill. It defines the file layout, the phase
-gates and the artifact formats. Follow it exactly.
+First, read the `sdd-protocol` skill — the core defines the layout, sizing and
+gates — and its `artifacts.md` reference for the `questions.md` format. This
+command convenes no panel, so skip `panel.md`.
 
 ## 1. Check for an active feature
 

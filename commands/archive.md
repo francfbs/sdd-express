@@ -16,9 +16,9 @@ Read `.sdd/ACTIVE` and `progress.md`.
 
 ## 2. Write the closing documents
 
-Dispatch `sddx:sdd-tech-writer` with `spec.md`, `progress.md`, `tasks.md`, the
-feature's commits, and the paths to `README.md` / `CLAUDE.md` / any docs
-directory. Ask it for:
+Dispatch `sddx:sdd-tech-writer` with the feature's directory path, the commit
+range, the path to write to (`reviews/tech-writer-archive.md`), and the paths to
+`README.md` / `CLAUDE.md` / any docs directory — paths, not contents. Ask it for:
 
 - the **changelog entry**, in the project's existing format
 - the **decision summary** — the two or three decisions a future maintainer
@@ -27,7 +27,7 @@ directory. Ask it for:
 
 ## 3. Apply
 
-Add the changelog entry where the project keeps it. Show the user the proposed
+Read the file it wrote. Add the changelog entry where the project keeps it. Show the user the proposed
 documentation edits and apply the ones they approve — particularly `CLAUDE.md`,
 since that is what shapes every future session in this repo.
 

@@ -119,8 +119,8 @@ installed.
                                     criterion, each with a way to verify it.
                          │          The panel reviews the plan too.
                          ▼
-/sddx:build              building   One task at a time: implement, run the checks,
-                                    QA reviews the diff, ledger gets updated.
+/sddx:build              building   One task at a time, each in a fresh implementer:
+                                    build, run the checks, record. QA reviews in batches.
                          │          `/sddx:build all` runs straight through and stops
                          │          when something actually needs you.
                          ▼
@@ -199,8 +199,11 @@ already settled — rather than exploring your repo itself. Six critics each
 grepping for the same auth configuration is the same reading paid six times, and
 it was by far the largest cost in this workflow.
 
-They also work to a budget: 8 tool calls, at most three blocking findings, 400
-words. Finding nothing blocking is a real outcome, and a cheap one.
+They also work to a budget: 8 tool calls, at most three blocking findings, a
+300-word review, and **one line** back to the orchestrator — verdict, counts,
+path. Each agent file is a short checklist, a fixed output format and one
+example of a real finding, not pages of persuasion. Finding nothing blocking is a
+real outcome, and a cheap one.
 
 **Round 2 is the exception, not the default.** It runs only when resolving round 1
 changed an acceptance criterion, the scope boundary, or a decision the spec rests
@@ -222,12 +225,12 @@ On disk, in your repo, in plain Markdown:
 .sdd/
   ACTIVE                     the slug of the feature in progress
   features/<slug>/
-    progress.md              phase, size, gates, task status, and an append-only decision log
+    progress.md              phase, size, gates, and an append-only decision log
     questions.md             every question asked — resolved ones keep their rejected options
     spec.md                  the contract: behaviour, acceptance criteria, out of scope
-    context.md               the briefing pack the panel reads instead of your codebase
-    tasks.md                 ordered tasks, dependencies, acceptance criteria
-    reviews/                 every panel review, by persona and round
+    context.md               the briefing every subagent reads instead of your codebase
+    tasks.md                 ordered tasks, dependencies, acceptance criteria — and their status
+    reviews/                 every review, by persona and round or checkpoint
   archive/<slug>/            finished features, kept whole
 ```
 
@@ -268,17 +271,28 @@ asked, and write the override into the decision log.
 ```
 
 Tasks always run **one at a time**, in dependency order, even in continuous
-mode. Each is implemented, checked against the project's own test and lint
-commands, reviewed by QA on its diff, and written into the ledger before the
-next begins. Continuous mode asks once whether to commit per task, then honours
-that for the whole run.
+mode. The session you are talking to only orchestrates: each task goes to a
+**fresh `sdd-implementer` subagent**, which reads `context.md` and that one task,
+builds it, runs the project's targeted checks, and reports back in a few lines.
+The orchestrator confirms the files actually moved and writes the ledger.
+Continuous mode asks once whether to commit per task, then honours that for the
+whole run.
+
+This is what keeps a long run affordable. Built in one conversation, the tenth
+task would pay again for everything the first nine read — test output included.
+With a fresh context per task, the tenth costs about what the first did.
+
+**Review is batched, not skipped.** At a checkpoint the full suite runs once and
+QA reviews the combined diff: every 3 tasks for a `standard` feature, every 2 for
+`deep`, once at the end for `express`. A task that touches auth, permissions or
+personal data triggers a checkpoint immediately, with the security reviewer on it.
 
 Continuous mode is not "run unattended until it breaks". It stops the moment it
 reaches something a person should see:
 
 - the task turned out to contradict the spec — that becomes an amendment you
   approve, never a silent change of plan
-- QA or the security reviewer found something it cannot confidently fix
+- a checkpoint found something Claude cannot confidently fix
 - a task is blocked, or everything remaining depends on one that is
 - the project's checks fail for a reason that is not this task
 - a real decision appeared — a trade-off, an ambiguity, two defensible designs
@@ -288,9 +302,10 @@ It tells you which condition fired and what the single next action is. Stopping
 is the feature working, not failing.
 
 **Implementation is deliberately not parallelised.** Parallel implementers
-collide on the same files, arrive without the context this session has built up,
-and produce a combined diff nobody can review. The parallelism goes where
-isolation helps instead: the review panel.
+collide on the same files and produce a combined diff nobody can review. A fresh
+implementer per task is sequential, not parallel — and the context it would
+otherwise lack is what `context.md` carries, extended by every task before it.
+The parallelism goes where isolation helps instead: the review panel.
 
 ---
 
@@ -342,21 +357,33 @@ two-page spec against a briefing pack does not need more. Set `model: inherit`
 on the domain expert, architect or security reviewer to spend your session's
 model on the judgement calls you care most about.
 
-**Tune the budget.** The tool-call and finding limits live in each agent's *Your
-budget* section, and the seat caps live in the protocol's size table. Raise them
-for a project where a missed finding costs more than a long morning.
+The phases want different models. `new`, `spec` and `plan` are judgement — run
+them on your strongest model, because a weak spec is paid for with interest at
+build. `build` only orchestrates, and its implementer's model is set in
+`agents/sdd-implementer.md`: `haiku` works for mechanical tasks with a sharp
+acceptance criterion, since checkpoints still review everything it writes.
 
-**Adjust the protocol.** Everything the workflow believes about phases, gates
-and artifact formats lives in one file: `skills/sdd-protocol/SKILL.md`. Commands
-and agents both defer to it, so that is where to make changes stick.
+**Tune the budget.** The tool-call and finding limits live in each agent's
+*Rules* section; the seat caps and checkpoint cadence live in the protocol's
+size table. Raise them for a project where a missed finding costs more than a
+long morning.
+
+**Adjust the protocol.** It lives in `skills/sdd-protocol/`: `SKILL.md` is the
+core every command loads — layout, sizing, gates, rules — and `artifacts.md` and
+`panel.md` are references loaded only by the commands that need them. Commands
+and agents defer to it, so that is where to make changes stick.
 
 ---
 
 ## Language
 
-Artifacts are written in whatever language you speak to Claude in — the spec for
-a Brazilian clinic comes out in Portuguese. Code, identifiers and commit
-messages stay in English.
+What you read is written in whatever language you speak to Claude in — the spec
+for a Brazilian clinic comes out in Portuguese, and so do `questions.md`,
+`progress.md` and the changelog.
+
+What only agents read — `context.md`, the review files, the prompts between
+them — is always English. Nobody reads it raw, and English carries the same
+facts in fewer tokens. Code, identifiers and commit messages stay in English too.
 
 ---
 

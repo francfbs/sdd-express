@@ -10,7 +10,7 @@ Features on disk: !`ls -1 .sdd/features/ 2>/dev/null || echo "(none)"`
 
 ---
 
-Read the `sdd-protocol` skill if you have not already.
+Read the `sdd-protocol` skill if you have not already — the core only.
 
 Report on the feature named in `$ARGUMENTS`, or the active one if no argument.
 If there is no active feature and no argument, list what is in `.sdd/features/`
@@ -23,9 +23,11 @@ that stands on its own — assume they have been away for two weeks:
    `updated:`. The size tells them how much workflow is still ahead.
 2. **What it is** — the summary paragraph, as written.
 3. **Gates** — which are ticked, which is next.
-4. **Tasks** — counts by status, then the specific tasks that are
-   `in-progress` or `blocked` and what each is waiting on. Do not print the
-   whole table if it is long; print what is live.
+4. **Tasks** — from `tasks.md`, the only place status lives: counts by status,
+   then the tasks that are `in-progress` or `blocked` and what each waits on.
+   Print what is live, not the whole list. In `building`, add the last
+   `checkpoint` line from the decision log and how many `done` tasks are
+   unreviewed since it.
 5. **Open questions** — blocking ones first.
 6. **The last three decisions** from the log, with their reasoning.
 7. **Next action** — the exact command to run, and why that one.

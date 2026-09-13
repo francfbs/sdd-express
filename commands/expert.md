@@ -57,7 +57,7 @@ multiple-choice questions, mining only for what is *not* in the code:
    the regulation and its jurisdiction, and what practitioners do that the happy
    path ignores: corrections after the fact, duplicates, covering a shift.
 
-Then write the file exactly as `/sddx:new` step 4 describes: the plugin's review
+Then write the file exactly as `/sddx:new` step 5 describes: the plugin's review
 format carried across unchanged, a specific role with standing, and the four
 knowledge sections — what you know that the author may not, the vocabulary,
 where this domain goes wrong, regulatory constraints. Close with a

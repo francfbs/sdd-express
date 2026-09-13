@@ -2,11 +2,13 @@
 description: Validate the built feature against every acceptance criterion in the spec
 ---
 
-Read the `sdd-protocol` skill first. Follow it exactly.
+Read the `sdd-protocol` skill first. You will need its `panel.md` reference at
+step 3.
 
 ## 1. Gate
 
-Read `.sdd/ACTIVE`, `progress.md`, `spec.md`, `tasks.md`.
+Read `.sdd/ACTIVE`, `progress.md`, `spec.md`, and the status lines of `tasks.md`
+(`grep -nE '^### T|status:'`).
 
 - Phase is before `building` → there is nothing built to validate. Stop.
 - Phase is `building` with tasks outstanding → this is a **mid-flight check**.
@@ -20,7 +22,8 @@ This is not a code review — `/code-review` does that. This asks one question:
 Go through the acceptance criteria in order. For each one, establish the answer
 from evidence you gathered, not from the fact that a task was marked done:
 
-- Run the project's full test, type check and lint suite. Report real output.
+- Run the full check from `context.md` once, output reduced to failures and the
+  summary. Report the real result.
 - Find the specific test or check that covers this criterion. If none exists,
   say so — a criterion with no coverage is unverified, regardless of whether
   the code looks correct.
@@ -32,23 +35,17 @@ unimplemented, because no task felt like it owned them.
 
 ## 3. Panel validation
 
-Dispatch **in parallel, in one message**, within the cap for this feature's
-`size:` — 2 for `express`, 3 for `standard`, up to 6 for `deep`:
+Read `panel.md` and fill the validation seats within the cap for this `size:`,
+dispatching as it describes. Give each the diff command for the whole feature and
+the full-check result in one line. Useful questions per seat:
 
-- `sddx:sdd-qa-engineer` — the whole diff against the whole spec, tests run.
-  Always the first seat
-- `sddx:sdd-security-reviewer` — if the feature touches auth, permissions, personal
-  or regulated data, payments, upload, or untrusted input
-- `sddx:sdd-ux-designer` — if there is a user-facing surface; ask specifically about
-  the states that only became visible once it was built
-- `sdd-domain-expert` — does the built behaviour match how the domain really
-  works, now that it is real rather than described. Skip it where the feature had
-  no domain rules of its own
+- **QA** — which criteria does the diff actually satisfy, and which only appear to?
+- **Security** — what is reachable now that it is real rather than described?
+- **UX** — which states only became visible once it was built?
+- **Domain** — does the built behaviour match how the domain really works?
 
-Give each the spec, the full feature diff, the path to `context.md`, a review
-file path (`reviews/<persona>-validation.md`) and the protocol's budget verbatim.
-
-Validation is one round. What it finds becomes tasks, not another review.
+Review files: `reviews/<persona>-validation.md`. Validation is one round; what it
+finds becomes tasks, not another review.
 
 ## 4. Report
 

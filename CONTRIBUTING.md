@@ -33,18 +33,24 @@ Related conventions, all deliberate:
 
 - Personas **critique and never edit code.** They write one file: their review.
   The only exception is `sdd-tech-writer`, which may edit prose in `spec.md`.
-- Personas **return at most 10 lines.** Detail goes in the review file; the
-  orchestrator reads that if it needs to. This keeps the main context usable.
+- Personas **return one line** — verdict, counts, path. Detail goes in the review
+  file, which the orchestrator reads. A summary that repeats the file is paid
+  for twice.
+- Persona files are **a checklist, rules, an output format and one example** —
+  not persuasion. Every word in an agent file is paid on every dispatch.
 - Personas **stay in their lane.** Overlapping findings waste the user's
   attention more than a missed finding costs.
-- Artifacts follow **the user's language**; code and commits stay English.
+- **What a person reads follows the user's language; what only agents read is
+  English.** Code and commits stay English.
 
 ## Changing the workflow itself
 
-Phases, gates and artifact formats live in `skills/sdd-protocol/SKILL.md`, and
-it is authoritative — commands defer to it. Change the protocol first, then any
-command that references what you changed. A command that contradicts the
-protocol is a bug in the command.
+The protocol lives in `skills/sdd-protocol/` and is authoritative — commands
+defer to it. `SKILL.md` is the core every command loads; `artifacts.md` and
+`panel.md` are references loaded on demand. Keep it that way: something only
+one phase needs belongs in that phase's command or in a reference, not in the
+core. Change the protocol first, then any command that references what you
+changed. A command that contradicts the protocol is a bug in the command.
 
 ## Testing a change
 

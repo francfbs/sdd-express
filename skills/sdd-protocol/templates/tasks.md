@@ -1,8 +1,8 @@
 # Tasks — {{FEATURE_NAME}}
 
-Ordered. A task may only depend on tasks above it. Sized so one task is one
-reviewable sitting — if it touches more than ~5 files or spans layers without a
-reason, split it.
+Ordered. A task may only depend on tasks above it. Each is sized to one
+implementer dispatch — and as few, as vertical, as that allows. This file is the
+only place task status lives.
 
 Status: `todo` · `in-progress` · `done` · `blocked` · `dropped`
 
@@ -11,7 +11,7 @@ Status: `todo` · `in-progress` · `done` · `blocked` · `dropped`
 ### T1 — {{title, stated as the outcome}}
 - **status:** todo
 - **depends on:** —
-- **touches:** {{paths you expect to change}}
+- **touches:** {{paths you expect to change, with line ranges where files are large}}
 - **satisfies:** AC-1
 - **acceptance:** {{how you will know this is done — a test that fails before
   and passes after, a command whose output changes, a behaviour you can drive}}

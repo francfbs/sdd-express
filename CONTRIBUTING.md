@@ -98,18 +98,21 @@ version string against the manifest, and **if it has not changed, existing users
 keep their cached copy no matter how many commits you push.** New installs get
 the newest `main`; everyone already on the plugin gets nothing.
 
-So a release is two things, together:
+So a release is three things, together:
 
 1. Bump `version` in `.claude-plugin/plugin.json`
-2. Tag the merge commit: `git tag -a v0.2.0 -m "..." && git push --tags`
+2. Bump `metadata.version` in `.claude-plugin/marketplace.json` to match
+3. Tag the merge commit: `git tag -a v0.2.0 -m "..." && git push --tags`
 
 The tag is not what distributes the plugin — `main` does that — but it gives
 anyone who wants stability something to pin with `ref` in their own marketplace
 entry.
 
-Set `version` in `plugin.json` only. The docs are explicit that `plugin.json`
-silently wins over a version in the marketplace entry, so having both means one
-of them is a lie waiting to confuse someone.
+Never put a `version` on the plugin's own entry inside `marketplace.json`'s
+`plugins` list. The docs are explicit that `plugin.json` silently wins over it,
+so having both means one of them is a lie waiting to confuse someone.
+`metadata.version` is different: it versions the catalogue, not the plugin, and
+it simply tracks the release so the two files never disagree at a glance.
 
 ### What counts as major, minor, patch
 

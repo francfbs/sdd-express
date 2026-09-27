@@ -74,7 +74,9 @@ Review is batched, not skipped. A checkpoint fires when:
 
 - the tasks `done` since the last checkpoint reach the size cadence — `standard`
   every 3, `deep` every 2, `express` only at the end
-- a report said `sensitive: yes` — checkpoint now, before building on top of it
+- a report said `sensitive: yes` **and** the next ready task depends on it —
+  checkpoint now, before building on top of it. Otherwise the security reviewer
+  joins the next scheduled checkpoint
 - the run is about to stop, for any reason, with unreviewed `done` tasks
 - the feature's last task is `done`
 
@@ -84,16 +86,24 @@ At a checkpoint:
 
 1. Read `panel.md`.
 2. Run the **full** check from `context.md` once, output reduced to failures and
-   the summary line.
+   the summary line. Failures → re-dispatch the implementer of the task that
+   owns them before any reviewer runs; reviewing a red tree wastes the seats.
 3. Dispatch the checkpoint seats in one message, each with: the slug, the task
-   IDs in the batch, the diff command — `git diff <base> -- <changed paths>`,
-   where `<base>` is the commit at the last checkpoint if committing per task,
-   otherwise `HEAD` — the full-check result in one line, and the review path
-   `reviews/<persona>-checkpoint-<last task ID>.md`.
+   IDs in the batch, the diff command — `git diff <base> -- <paths>`, where
+   `<base>` is the commit at the last checkpoint if committing per task,
+   otherwise `HEAD` — the full-check result in one line, the path to
+   `verification.md`, and the review path
+   `reviews/<persona>-checkpoint-<last task ID>.md`. QA gets the batch's changed
+   paths; security only the paths of the tasks that reported `sensitive: yes`.
+   The seats read; they do not re-run what `verification.md` and the full check
+   already show.
 4. Real findings → set that task back to `in-progress` and re-dispatch the
    implementer with the finding. A finding you disagree with: say why.
 5. Append one line to the decision log:
-   `checkpoint T4–T6: <verdict>, <n> findings fixed`.
+   `checkpoint T4–T6: <verdict>, <n> findings fixed, full check <pass|fail> @<fingerprint>`,
+   the fingerprint taken as the protocol describes, when the full check ran. A
+   fix afterwards moves it, which is correct: `/sddx:qa` reuses the result only
+   while the code is exactly what was checked.
 
 ### 3e. Continue or stop
 

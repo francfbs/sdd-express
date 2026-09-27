@@ -230,6 +230,7 @@ On disk, in your repo, in plain Markdown:
     spec.md                  the contract: behaviour, acceptance criteria, out of scope
     context.md               the briefing every subagent reads instead of your codebase
     tasks.md                 ordered tasks, dependencies, acceptance criteria — and their status
+    verification.md          per task, what the implementer actually ran for each criterion
     reviews/                 every review, by persona and round or checkpoint
   archive/<slug>/            finished features, kept whole
 ```
@@ -273,7 +274,9 @@ asked, and write the override into the decision log.
 Tasks always run **one at a time**, in dependency order, even in continuous
 mode. The session you are talking to only orchestrates: each task goes to a
 **fresh `sdd-implementer` subagent**, which reads `context.md` and that one task,
-builds it, runs the project's targeted checks, and reports back in a few lines.
+builds it, runs the project's targeted checks — never a dev server or browser —
+records what it ran per criterion in `verification.md`, and reports back in a
+few lines.
 The orchestrator confirms the files actually moved and writes the ledger.
 Continuous mode asks once whether to commit per task, then honours that for the
 whole run.
@@ -284,8 +287,16 @@ With a fresh context per task, the tenth costs about what the first did.
 
 **Review is batched, not skipped.** At a checkpoint the full suite runs once and
 QA reviews the combined diff: every 3 tasks for a `standard` feature, every 2 for
-`deep`, once at the end for `express`. A task that touches auth, permissions or
-personal data triggers a checkpoint immediately, with the security reviewer on it.
+`deep`, once at the end for `express`. A task that changes server-side
+authorization, policies, auth, payments or upload brings the security reviewer
+to the next checkpoint — immediately, if the next task builds on it.
+
+**Every check has one owner.** Reviewers read `verification.md` and the diff
+instead of re-running the implementer's tests, and never start the app. The
+single pass through the running app happens at `/sddx:qa`, only for criteria the
+plan marked `(manual)`; the full-check result from the last checkpoint is reused
+there when the code has not moved since, and disciplines that already reviewed
+at a checkpoint do not sit again.
 
 Continuous mode is not "run unattended until it breaks". It stops the moment it
 reaches something a person should see:

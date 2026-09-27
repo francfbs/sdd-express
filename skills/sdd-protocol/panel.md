@@ -13,7 +13,7 @@ cost — convene the fewest that cover the risk.
 | `/sddx:spec` | by size: `express` 2, `standard` 3, `deep` up to 6 — filled in the order below |
 | `/sddx:plan` | `express` none; `standard` QA; `deep` QA + code designer, + architect if infrastructure, migration or a service boundary is involved |
 | build checkpoint | QA; + security reviewer if any task in the batch reported `sensitive: yes` |
-| `/sddx:qa` | same cap as the spec panel, same order |
+| `/sddx:qa` | the spec panel's seats, **minus any discipline that already reviewed this code at a build checkpoint** — QA always, security when it saw every `sensitive` task. Usually UX and the domain expert; `express` at most 1 |
 
 The spec and validation seats fill in this order, stopping at the cap:
 
@@ -59,7 +59,9 @@ All seats **in one message, in parallel**. Each prompt is short, in English, and
 points rather than pastes:
 
 1. what is under review — the path to `spec.md` or `tasks.md`, or the exact
-   `git diff` command for a diff
+   `git diff` command for a diff, limited to the paths that discipline judges
+   (UX the UI files, security the server and policy files), plus the path to
+   `verification.md`
 2. the path to `context.md`
 3. **one question**, scoped to that discipline and this feature. A question
    narrow enough to be answered wrong is worth ten generic ones

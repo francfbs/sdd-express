@@ -14,7 +14,8 @@ Status: `todo` · `in-progress` · `done` · `blocked` · `dropped`
 - **touches:** {{paths you expect to change, with line ranges where files are large}}
 - **satisfies:** AC-1
 - **acceptance:** {{how you will know this is done — a test that fails before
-  and passes after, a command whose output changes, a behaviour you can drive}}
+  and passes after, a command whose output changes; mark `(manual)` only what
+  needs the running app}}
 
 ### T2 — {{title}}
 - **status:** todo

@@ -37,8 +37,10 @@ overhead whatever its size.
   resolve which, out loud.
 - **`touches` with line ranges** where files are large. It is what the implementer
   reads.
-- **Acceptance is verifiable** — a test that fails before and passes after, a
-  command whose output changes, a behaviour that can be driven.
+- **Acceptance is verifiable, cheapest proof first** — a test that fails before
+  and passes after, a command whose output changes. For UI, a component test
+  that renders the state beats driving the app. Mark `(manual)` only what truly
+  needs the running app; `/sddx:qa` drives those once, nobody earlier.
 - **Order by dependency**, with something demonstrable working early.
 - Include the unglamorous work — migration, rollback, telemetry, docs — when the
   non-functional requirements imply it. Fold it into the slice it belongs to

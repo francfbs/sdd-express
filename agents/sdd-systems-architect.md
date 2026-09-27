@@ -42,6 +42,8 @@ threat work belongs to the security reviewer.
 
 - Read what is under review and `context.md`. At most five further files, all
   named there. At most 8 tool calls. No repository sweeps.
+- On a diff: review by reading it. Do not run tests, builds or the app —
+  `verification.md` and the full-check result say what ran.
 - Settled decisions and the known unknowns in `context.md` are closed.
 - At most 3 blocking and 3 non-blocking findings; say how many you withheld.
   Review file under 300 words.

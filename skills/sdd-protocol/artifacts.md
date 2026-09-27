@@ -66,10 +66,33 @@ the slices demonstrate something working earlier. The size table in the core
 protocol gives the target count. Split a task only when one criterion cannot
 verify it, or when it mixes two things that could fail for unrelated reasons.
 
+**Acceptance, cheapest proof first:** a unit or component test, then an
+integration test, then a command whose output changes. A criterion that only a
+running app can show — a visual state, a real third-party round trip — is marked
+`(manual)` in the acceptance line. The implementer proves what a test can and
+defers the rest to the single pass `/sddx:qa` makes through the running app.
+Keep `(manual)` rare; each one is a human step at validation.
+
 **`touches` is what the implementer reads**, and nothing else by default. Give
 line ranges where a file is large and only part of it matters.
 
 A task may only depend on tasks above it.
+
+## verification.md — the evidence
+
+Agent-only, in English. One block per task, appended by the implementer and
+replaced when the task is re-dispatched:
+
+```
+### T3 — done
+- AC-4: `<command>` → 6 pass; "<test name>" failed before the change
+- AC-5: manual — <what needs the running app>
+- not run: full suite, e2e
+```
+
+Checkpoint and validation reviewers read it instead of re-running the checks;
+`/sddx:qa` uses it as the map from criterion to test, and drives the running app
+only for the `manual` lines.
 
 ## context.md — the briefing
 

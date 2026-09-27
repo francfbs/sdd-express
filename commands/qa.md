@@ -20,27 +20,40 @@ This is not a code review — `/code-review` does that. This asks one question:
 **does the thing the spec promised actually happen?**
 
 Go through the acceptance criteria in order. For each one, establish the answer
-from evidence you gathered, not from the fact that a task was marked done:
+from evidence, not from the fact that a task was marked done — but do not
+re-gather evidence that already exists:
 
-- Run the full check from `context.md` once, output reduced to failures and the
-  summary. Report the real result.
-- Find the specific test or check that covers this criterion. If none exists,
-  say so — a criterion with no coverage is unverified, regardless of whether
-  the code looks correct.
-- Where a criterion cannot be checked automatically, trace it through the code
-  and say exactly what a human should click to confirm it.
+- **Full check.** If the last `checkpoint` line in the decision log says `full
+  check pass` and its fingerprint equals the current one (computed as the
+  protocol describes), cite it — the code has not moved since. Otherwise run it
+  once, output reduced to failures and the summary.
+- **Map criteria to tests from `verification.md`.** Open a named test only to
+  confirm it asserts the criterion. Search the code only for a criterion
+  `verification.md` does not cover — a criterion with no coverage is
+  unverified, regardless of how the code looks. No `verification.md` at all (a
+  feature built before it existed) → find the covering test per criterion.
+- **The `manual` lines, once.** If you can drive the app here (a browser tool,
+  the CLI), start it once and walk all the `manual` lines in a single pass —
+  the primary flow and what each line names, no exploratory testing. If you
+  cannot, trace each through the code and say exactly what a human should
+  click to confirm it.
 
 Also check the non-functional requirements. They are the ones that quietly go
 unimplemented, because no task felt like it owned them.
 
 ## 3. Panel validation
 
-Read `panel.md` and fill the validation seats within the cap for this `size:`,
-dispatching as it describes. Give each the diff command for the whole feature and
-the full-check result in one line. Useful questions per seat:
+Read `panel.md` for the validation seats: the spec panel minus the disciplines
+that already reviewed this code at build checkpoints (the decision log's
+`checkpoint` lines and `reviews/*-checkpoint-*` say which). QA is covered by your
+criterion-by-criterion pass above and never sits here. Say in one line who sits
+and who was dropped as already covered. No seat left → skip this step and say so.
 
-- **QA** — which criteria does the diff actually satisfy, and which only appear to?
-- **Security** — what is reachable now that it is real rather than described?
+Give each seat the diff command for the whole feature limited to its paths, the
+full-check result in one line, and `verification.md`. Useful questions per seat:
+
+- **Security** (only if it saw no checkpoint) — what is reachable now that it is
+  real rather than described?
 - **UX** — which states only became visible once it was built?
 - **Domain** — does the built behaviour match how the domain really works?
 

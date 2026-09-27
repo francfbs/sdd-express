@@ -51,6 +51,7 @@ announce either rule.
       spec.md          the contract: what gets built and how you know it works
       context.md       the briefing every subagent reads instead of the codebase
       tasks.md         ordered tasks — the only place task status lives
+      verification.md  per task, what the implementer ran for each criterion
       reviews/         one file per reviewer, per round or checkpoint
   archive/<slug>/      completed features, moved here by /sddx:archive
 ```
@@ -140,6 +141,14 @@ after `planning` as a check. It reports; it does not advance.
    criteria a task satisfies, not the whole spec; a line range, not a module.
    Command output the same way: failures and the summary line, never a passing
    suite in full.
-9. **Spend where uncertainty is.** Every round, seat, question and task is a cost
+9. **Each check has one owner; evidence travels by file.** The implementer runs
+   the targeted checks and records them in `verification.md`. The build
+   checkpoint runs the full check. `/sddx:qa` makes the one pass through the
+   running app, only for what is marked `manual`. Reviewers read that evidence
+   and the diff; they re-run a check only to confirm a specific finding, and
+   never start the app. A full-check result is reused while the code
+   fingerprint is unchanged:
+   `{ git log -1 --format=%H -- . ':(exclude).sdd'; git diff HEAD -- . ':(exclude).sdd'; git ls-files -oz --exclude-standard -- . ':(exclude).sdd' | xargs -0 cat; } | git hash-object --stdin | cut -c1-12`
+10. **Spend where uncertainty is.** Every round, seat, question and task is a cost
    the user pays. If you cannot say what a review would change, do not run it —
    an abandoned workflow finds no holes at all.
